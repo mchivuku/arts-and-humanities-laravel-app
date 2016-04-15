@@ -2,13 +2,10 @@
 
 namespace ArtsAndHumanities\Http\Controllers;
 
-use ArtsAndHumanities\Services\HtmlMacros;
-use Collective\Html\HtmlBuilder;
-use Illuminate\Http\Request;
 use ArtsAndHumanities\Models as Models;
 use ArtsAndHumanities\Http\Requests;
 
-class EventTypeController extends Controller
+class EventTypesController extends Controller
 {
 
     public function __construct()
@@ -28,16 +25,22 @@ class EventTypeController extends Controller
         $types = Models\Type::all()->toArray();
 
          // edit/delete link
-        $types = array_map(function($item){
-            $edit= "{{ URL::to('/' . '".$item['id']."') }}";
-            $item['link'] = "";
-            $item['link'] .= "|". "<a  class='button tiny round' href='$edit'>Delete</a>";
-            return $item;
+        $content = array_map(function($item){
+
+
+            $e['description']=$item['description'];
+            $e['date'] = date("F j, Y",strtotime($item['updated_at']));
+            $e['updated by']= $item['update_user'];
+            $edit_link = "<a  href='eventTypes/".$item['id']."/edit'>Edit </a>";
+            $delete_link = "<a  href='eventTypes/".$item['id']."/delete'>Delete </a>";
+
+            $e['action'] = $edit_link." | ".$delete_link;
+            return $e;
         },$types);
 
         // load the view and pass the types
         return view('eventTypes.index')
-            ->with('collection', $types);
+            ->with('collection', $content);
 
     }
 
@@ -79,6 +82,18 @@ class EventTypeController extends Controller
     public function show($id)
     {
 
+        $type = Models\Type::where('id','=',$id)->first();
+        $model = new \StdClass;
+
+        if(isset($type)){
+            $model->content= view('eventTypes.show', array('model'=>$type));
+            $model->title= $type->descritpion;
+        }else{
+            $model->title= 'Not Found';
+            $model->content='Type was not found.';
+        }
+
+        return view('partials._modal',array('model'=>$model));
     }
 
     /**
@@ -89,7 +104,11 @@ class EventTypeController extends Controller
      */
     public function edit($id)
     {
-        //
+        $event = Models\Type::find($id);
+
+        return view('eventTypes.edit')->with('form_title','Edit event type')
+            ->with('model',$event);
+
     }
 
     /**
@@ -98,9 +117,18 @@ class EventTypeController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id,Requests\EventTypeFormRequest $request)
     {
-        //
+        // store
+        $type = Models\Type::find($id);
+        $type->description       = $request->description;
+        $type->update_user    = $this->currentUser;
+
+        $type->save();
+
+        // redirect
+        \Session::flash('message', 'Successfully updated event type!');
+        return \Redirect::to('eventTypes');
     }
 
     /**
@@ -109,8 +137,13 @@ class EventTypeController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
-        //
+
+
+        Models\Type::where("id","=",$id)->delete();
+
+        \Session::flash('message', 'Successfully deleted the event type!');
+        return \Redirect::to('eventTypes');
     }
 }

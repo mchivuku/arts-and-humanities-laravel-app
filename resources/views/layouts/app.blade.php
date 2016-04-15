@@ -32,13 +32,17 @@
     <meta content="IU Bloomington’s thriving arts scene and unrivaled breadth and depth of humanities experiences are worth experiencing."
           itemprop="description"/>
 
-
+    <link href="{{asset("css/foundation.min.css")}}" rel="stylesheet">
     <?php $_GET['path'] = 'css.html';include('includer.php')?>
+
+
+    <link href="{{asset("css/app.min.css")}}" rel="stylesheet">
 
     <?php $_GET['path'] = 'javascript-head.html';include('includer.php')?>
 
 
 </head>
+
 <body class="mahogany" id="home">
 
 
@@ -74,7 +78,7 @@
         @yield('navigation-primary')
 
         <main class="no-section-nav" role="main">
-
+            @include('partials.alerts')
             @yield('content')
 
         </main>
@@ -92,6 +96,8 @@
 
 
 <?php $_GET['path'] = 'javascript.html';include("includer.php");?>
+<script type="text/javascript" src="{{asset("js/app.min.js")}}"></script>
+@yield('page-js')
 
 </body>
 </html>

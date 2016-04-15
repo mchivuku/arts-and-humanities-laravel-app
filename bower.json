@@ -1,0 +1,22 @@
+{
+  "name": "Arts-Humanities",
+  "description": "",
+  "main": "gulpfile.js",
+  "authors": [
+    "artsbl"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "foundation": "^5.5.3",
+    "datatables.net": "^1.10.11",
+    "datatables.net-zf": "^1.10.11"
+  }
+}

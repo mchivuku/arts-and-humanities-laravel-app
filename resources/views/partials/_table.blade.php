@@ -8,7 +8,7 @@ $columns = array_keys($first);
     <thead>
     <tr>
         @foreach($columns as $col)
-            <td>{{$col}}</td>
+            <td><?php echo ucwords($col);?></td>
         @endforeach
     </tr>
     </thead>

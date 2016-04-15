@@ -10,8 +10,13 @@
 namespace ArtsAndHumanities\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Venue extends BaseModel{
 
-    protected $table = 'event_venue';
+    use SoftDeletes;
+    protected $table = 'venue';
+    protected $softDelete = true;
+    protected $dates = array('deleted_at');
+    public $timestamps = false;
 }

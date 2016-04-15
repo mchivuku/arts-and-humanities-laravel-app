@@ -11,7 +11,7 @@ namespace ArtsAndHumanities\Http\Requests;
 
 use ArtsAndHumanities\Http\Requests;
 
-class EventTypeFormRequest extends EventAttributeFormRequest
+class EventVenueFormRequest extends EventAttributeFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -32,9 +32,9 @@ class EventTypeFormRequest extends EventAttributeFormRequest
     {
 
         parent::rules();
-
+ 
         return [
-            'description'=>'required|description_exists:type,description,id'
+            'description'=>'required|description_exists:venue,description,id'
         ];
     }
 }

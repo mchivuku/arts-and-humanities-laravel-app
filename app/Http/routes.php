@@ -12,4 +12,11 @@
 */
 
 Route::get('/', 'HomeController@index');
-Route::resource('eventTypes', 'EventTypeController');
+
+//Event Types
+Route::resource('eventTypes', 'EventTypesController');
+Route::get('/eventTypes/{id}/delete','EventTypesController@delete');
+
+//Event Venues
+Route::resource('eventVenues', 'EventVenuesController');
+Route::get('/eventVenues/{id}/delete','EventVenuesController@delete');

@@ -10,11 +10,14 @@
 namespace ArtsAndHumanities\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Type extends BaseModel{
 
+    use SoftDeletes;
+    protected $softDelete = true;
     protected $table = 'type';
     public $timestamps = false;
-    protected $fillable = array('description', 'updated_at', 'update_user');
 
-}
+    protected $fillable = array('description', 'updated_at', 'update_user');
+ }
