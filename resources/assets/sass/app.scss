@@ -1,2 +1,21 @@
 // @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+.datepicker td span.active, .datepicker td.active.day, .datepicker td.active.year{
+  background: #900 none repeat scroll 0 0;
+}
+
+
+.datepicker thead tr th{background:#900}
+
+ .datepicker .prev:before{color:#fff;position:absolute}
+.datepicker .next:before{color:#fff;position:absolute}
+
+.datepicker .next:before{content:"";width:0;height:0;
+  border-top: 5px solid transparent;border-bottom: 5px solid transparent;
+  border-left: 5px solid #fff}
+
+
+.datepicker .prev:before{content:"";width:0;height:0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #fff}

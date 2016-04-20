@@ -1,25 +1,18 @@
 @extends('layouts.app')
 
-@section('navigation-primary')
-    @include('eventTypes._navigation-primary')
-@endsection
-
 @section('content')
-    {!! Html::renderBeginSection("",'bg-none',true) !!}
+    {!! Html::beginSection("",'bg-none',true) !!}
 
             @if(count($collection)>0)
             @include("partials._table")
             @else
             <p>No event types found!</p>
             @endif
-    {!! Html::renderEndSection(true) !!}
+    {!! Html::endSection(true) !!}
 
 
 @endsection
 
-@section('navigation-mobile')
-    @include('eventTypes._navigation-mobile')
-@endsection
 
 
 @section('page-js')

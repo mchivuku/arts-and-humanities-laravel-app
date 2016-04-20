@@ -28,7 +28,7 @@ class HtmlMacros extends \Collective\Html\HtmlBuilder {
 
     }
 
-    public function renderBeginSection($title="",$bgColor = "bg-none",$first=false,$text=true){
+    public function beginSection($title="",$bgColor = "bg-none",$first=false,$text=true){
         if($first)
            $html = "<section class=\"$bgColor section\" id=\"content\">";
         else
@@ -37,7 +37,7 @@ class HtmlMacros extends \Collective\Html\HtmlBuilder {
         $html.="<div class='row'><div class=\"layout\">";
 
         if($title!="")
-            $html.="<h2 class=\"section-title\">$title</h2>";
+            $html.="<h4 class=\"section-title\">$title</h4>";
 
         $html.="<div class=\"full-width\">";
 
@@ -49,14 +49,12 @@ class HtmlMacros extends \Collective\Html\HtmlBuilder {
 
     }
 
-
-    public function renderEndSection($text=true){
+    public function endSection($text=true){
         $html="";
         if($text)
             $html = "</div>";
 
         $html.="</div></div></div></section>";
-
         return $html;
 
     }

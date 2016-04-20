@@ -8,17 +8,11 @@ $(document).ready(function(){
 
     jQuery.fn.exists = function(){return this.length>0;}
 
-    if (!$('aside').exists()){
-        $('main').addClass('no-section-nav');
-    }else{
-        $('.alert-box').parents('section').addClass('section');
-    }
-
     ModalWindow.init();
-    AjaxTabs.init();
+
 
     // close alert box -
-    $('.alert-box > a.close').click(function() { $(this).closest('[data-alert]').fadeOut(); });
+    $('.alert-box > a.close').click(function() { $(this).closest('#alert').fadeOut(); });
 
 
 

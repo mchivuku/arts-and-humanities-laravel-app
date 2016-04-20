@@ -38,7 +38,7 @@ class EventVenuesController extends Controller
         },$venues);
 
         // load the view and pass the types
-        return view('eventVenues.index')
+        return view('eventVenues.index')->with('pageTitle','Manage Event Venues')
             ->with('collection', $content);
 
     }
@@ -50,7 +50,7 @@ class EventVenuesController extends Controller
      */
     public function create()
     {
-        return view('eventVenues.create')->with('form_title','Create event venue');
+        return view('eventVenues.create')->with('form_title','Create event venue')->with('pageTitle','Create event venue');
     }
 
     /**
@@ -105,7 +105,7 @@ class EventVenuesController extends Controller
     {
         $venue = Models\Venue::find($id);
 
-        return view('eventVenues.edit')->with('form_title','Edit event venue')
+        return view('eventVenues.edit')->with('form_title','Edit event venue')->with('pageTitle','Edit event venue')
             ->with('model',$venue);
 
     }
@@ -139,7 +139,7 @@ class EventVenuesController extends Controller
     public function delete($id)
     {
 
-        Models\Type::where("id","=",$id)->delete();
+        Models\Venue::where("id","=",$id)->delete();
 
         \Session::flash('message', 'Successfully deleted the event venue!');
         return \Redirect::to('eventVenues');

@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: mchivuku
- * Date: 4/12/16
- * Time: 2:32 PM
+ * Date: 4/15/16
+ * Time: 3:04 PM
  */
 
 
@@ -11,8 +11,9 @@ namespace ArtsAndHumanities\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Recommendation extends BaseModel{
+class Schedule extends BaseModel
+{
+    protected $table = 'event_schedule';
 
-    protected $table = 'event_recommendation';
 
 }

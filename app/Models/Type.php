@@ -20,4 +20,9 @@ class Type extends BaseModel{
     public $timestamps = false;
 
     protected $fillable = array('description', 'updated_at', 'update_user');
+
+    public function events(){
+        return $this->belongsToMany("Event", "event_type", "type_id", "event_id")
+            ->withPivot("update_user");
+    }
  }

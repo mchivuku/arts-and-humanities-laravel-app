@@ -123,7 +123,7 @@ return [
 
     'calendar_url' => env('CALENDAR_URL', 'https://uisapp2.iu.edu/ccl-prd/Xml.do?pubCalId=GRP1445'),
 
-
+    'site_title'=>'Bloomington Arts &amp; Humanities - Admin',
 
     /*
     |--------------------------------------------------------------------------

@@ -5,7 +5,7 @@
 
     ?>
 
-    <section class="collapsed bg-none">
+    <section class="collapsed bg-none section" id="alert">
         <div class="row">
             <div class="layout">
                 <div class="full-width">

@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-{!! Html::renderBeginSection($form_title,'bg-none',true) !!}
+{!! Html::beginSection($form_title,'bg-none',true) !!}
 
                 <!-- display errors -->
                 {{ Html::ul($errors->all(),array('class'=>'no-bullet')) }}
@@ -16,7 +16,7 @@
                     @include('partials._form')
 
                 {{ Form::close() }}
-{!! Html::renderEndSection(true) !!}
+{!! Html::endSection(true) !!}
 
 @endsection
 

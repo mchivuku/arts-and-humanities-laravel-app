@@ -20,3 +20,29 @@ Route::get('/eventTypes/{id}/delete','EventTypesController@delete');
 //Event Venues
 Route::resource('eventVenues', 'EventVenuesController');
 Route::get('/eventVenues/{id}/delete','EventVenuesController@delete');
+
+//Events
+Route::group(['prefix' => 'events'], function () {
+    Route::get('/', 'EventsController@index');
+    Route::get('/results', 'EventsController@results');
+    Route::get('/edit/{id}', 'EventsController@edit');
+    Route::post('/update', 'EventsController@update');
+    Route::get('/show/{id}', 'EventsController@show');
+
+    Route::get("images/{filename}",function($filename){
+
+        $path = public_path()."/images/events/".$filename;
+        if(file_exists($path)) {
+            $img = (file_get_contents($path));
+            $response = Response::make($img);
+            $response->header('Content-Type', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path));
+            return $response;
+        }
+
+        return "";
+
+
+    });
+});
+
+

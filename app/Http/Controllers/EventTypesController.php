@@ -10,6 +10,7 @@ class EventTypesController extends Controller
 
     public function __construct()
     {
+
         parent::__construct();
     }
 
@@ -39,7 +40,7 @@ class EventTypesController extends Controller
         },$types);
 
         // load the view and pass the types
-        return view('eventTypes.index')
+        return view('eventTypes.index')->with('pageTitle','Event Types')
             ->with('collection', $content);
 
     }
@@ -51,7 +52,7 @@ class EventTypesController extends Controller
      */
     public function create()
     {
-        return view('eventTypes.create')->with('form_title','Create event type');
+        return view('eventTypes.create')->with('pageTitle','Create event type')->with('form_title','Create event type');
     }
 
     /**
@@ -106,7 +107,7 @@ class EventTypesController extends Controller
     {
         $event = Models\Type::find($id);
 
-        return view('eventTypes.edit')->with('form_title','Edit event type')
+        return view('eventTypes.edit')->with('form_title','Edit event type')->with('pageTitle','Edit event type')
             ->with('model',$event);
 
     }
@@ -139,7 +140,6 @@ class EventTypesController extends Controller
      */
     public function delete($id)
     {
-
 
         Models\Type::where("id","=",$id)->delete();
 

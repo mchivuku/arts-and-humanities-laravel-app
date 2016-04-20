@@ -1,16 +1,7 @@
 <!-- display errors -->
 
-<div class="form-item">
-
-    <div class="form-item-label">
-        {{ Form::label('description', 'Description') }}
-    </div>
-
-    <div class="form-item-input">
-        {{Form::text('description',isset($model->description)?$model->description:"")}}
-    </div>
-
-</div>
+{!! Form::formGroup(Form::label('description', 'Description') ,
+Form::text('description',isset($model->description)?$model->description:"")) !!}
 
 @if (isset($model->id))
 {{Form::hidden('id',$model->id)}}

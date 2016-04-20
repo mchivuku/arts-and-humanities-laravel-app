@@ -5,16 +5,15 @@
 @endsection
 
 @section('content')
-    {!! Html::renderBeginSection("",'bg-none',true) !!}
-
+    {!! Html::beginSection("",'bg-none',true) !!}
 
             @if(count($collection)>0)
             @include("partials._table")
             @else
-            <p>No event types found!</p>
+            <p>No event venues found!</p>
             @endif
 
-    {!! Html::renderEndSection(true) !!}
+    {!! Html::endSection(true) !!}
 
 @endsection
 

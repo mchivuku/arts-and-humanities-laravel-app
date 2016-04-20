@@ -33,6 +33,8 @@
           itemprop="description"/>
 
     <link href="{{asset("css/foundation.min.css")}}" rel="stylesheet">
+    <link href="{{asset("css/foundation-datepicker.min.css")}}" rel="stylesheet">
+
     <?php $_GET['path'] = 'css.html';include('includer.php')?>
 
 
@@ -70,27 +72,37 @@
         <header itemscope="itemscope" itemtype="http://schema.org/CollegeOrUniversity">
             <div class="row pad">
                 <h1 itemprop="department"><a href="https://artsbl.webtest.iu.edu/laravel/index.php">
-                        <span>Bloomington Arts &amp; Humanities - Admin </span></a></h1>
+                        <span>{{config('app.site_title')}}</span></a></h1>
             </div>
         </header>
 
+        @yield('banner')
 
-        @yield('navigation-primary')
+        <main role="main">
+            @include('partials._navigation-section')
 
-        <main class="no-section-nav" role="main">
+
+            <!-- Page title -->
+            <section class="section page-title bg-none">
+                <div class="row"><div class="layout">
+                        <h1>{{$pageTitle}}</h1>
+                    </div>
+                </div>
+            </section>
+
             @include('partials.alerts')
+
+
             @yield('content')
 
         </main>
-
 
         <?php include "gwassets/brand/2.x/footer.html"; ?>
     </div><!-- /.inner-wrap -->
     <div class="right-off-canvas-menu show-for-medium-down hide-for-large-up">
         <div class="search-box off-canvas-padding" id="off-canvas-search"></div>
-        @yield('navigation-mobile')
+        @include('partials._navigation-mobile')
     </div>
-
 
 </div><!-- /.off-canvas-wrap -->
 
