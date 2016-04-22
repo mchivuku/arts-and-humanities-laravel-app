@@ -12,7 +12,7 @@ $(document).ready(function(){
 
 
     // close alert box -
-    $('.alert-box > a.close').click(function() { $(this).closest('#alert').fadeOut(); });
+    $('.alert-box  > a.close').click(function() { $(this).closest('#alert').fadeOut(); });
 
 
 

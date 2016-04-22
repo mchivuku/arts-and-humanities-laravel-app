@@ -35,10 +35,6 @@
 
 @endsection
 
-@section('navigation-mobile')
-    @include('events._navigation-mobile')
-@endsection
-
 
 @section('page-js')
     <script type="text/javascript" src="{{asset("js/foundation-datepicker.min.js")}}"></script>
@@ -60,8 +56,10 @@
         function getResults() {
 
             data = $('form').serialize();
+            $('#search-results').html('<img src="{{asset("/css/img/ajax-loader.gif")}}"/>');
+
             $.get('{{Url::to("events/results")}}',data,function(content){
-                $('#search-results').empty().html(content);
+                 $('#search-results').empty().html(content);
                 IUComm.uiModules['accordion'].init();
             });
         }

@@ -1,19 +1,14 @@
 
 @extends('layouts.app')
 
-@section('navigation-primary')
-    @include('eventVenues._navigation-primary')
-@endsection
 
 @section('content')
 
      {!! Html::beginSection($form_title,'bg-none',true) !!}
 
-        <!-- display errors -->
-        {{ Html::ul($errors->all(),array('class'=>'no-bullet')) }}
+     @include('partials._formerrors')
 
-
-        {{ Form::open(array('action' => 'EventVenuesController@store')) }}
+     {{ Form::open(array('action' => 'EventVenuesController@store')) }}
         @include('partials._form')
 
         {{ Form::close() }}

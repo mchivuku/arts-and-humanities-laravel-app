@@ -12,10 +12,10 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
 
-
     public function __construct()
     {
-        $this->currentUser = isset($_SERVER['REMOTE_USER'])?$_SERVER['REMOTE_USER']:"";
 
+
+        $this->currentUser=  session()->get('user');
     }
 }

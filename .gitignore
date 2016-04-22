@@ -4,6 +4,9 @@
 /resources/assets/bower_components
 Homestead.yaml
 Homestead.json
+/config/database.php
 .env
 .idea
 .env.example
+
+config/database.php

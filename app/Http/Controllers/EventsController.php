@@ -16,6 +16,7 @@ class EventsController extends Controller
 
     public function __construct()
     {
+
         parent::__construct();
     }
 
@@ -27,12 +28,11 @@ class EventsController extends Controller
         if(isset($params['title']))
             $events= $events->where('summary','like',"%".$params['title']."%");
 
-        if(isset($params['date'])){
+        if(isset($params['date']) && $params['date']!=""){
              $date = date('Y-m-d',strtotime($params['date']));
-             $events= $events->whereRaw('id IN (select event_id from event_schedule WHERE
+             $events= $events->whereRaw('unique_id IN (select event_id from event_schedule WHERE
                         date(start_date_time)="'. $date .'")');
         }
-
 
         $events = $events->paginate($this->perPage);
         $result=null;
@@ -116,7 +116,8 @@ class EventsController extends Controller
         return view('events.edit')
             ->with('event',$event)
             ->with('types',$build_select($types_db))
-            ->with('venues',$build_select($venues_db))->with('pageTitle','Edit Event');;
+            ->with('venues',$build_select($venues_db))
+            ->with('pageTitle','Edit Event');;
 
     }
 

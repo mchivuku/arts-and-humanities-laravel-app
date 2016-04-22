@@ -11,38 +11,62 @@
 |
 */
 
-Route::get('/', 'HomeController@index');
+Route::get('/', [
+     'uses' => 'HomeController@index'
+]);
 
 //Event Types
-Route::resource('eventTypes', 'EventTypesController');
-Route::get('/eventTypes/{id}/delete','EventTypesController@delete');
+Route::group(['middleware' => 'cas'], function()
+{
+
+
+    Route::resource('eventTypes', 'EventTypesController');
+    Route::get('/eventTypes/{id}/delete','EventTypesController@delete');
 
 //Event Venues
-Route::resource('eventVenues', 'EventVenuesController');
-Route::get('/eventVenues/{id}/delete','EventVenuesController@delete');
+    Route::resource('eventVenues', 'EventVenuesController');
+    Route::get('/eventVenues/{id}/delete','EventVenuesController@delete');
+
+});
+
 
 //Events
-Route::group(['prefix' => 'events'], function () {
+Route::group(['prefix' => 'events','middleware' => 'cas'], function () {
     Route::get('/', 'EventsController@index');
     Route::get('/results', 'EventsController@results');
     Route::get('/edit/{id}', 'EventsController@edit');
     Route::post('/update', 'EventsController@update');
     Route::get('/show/{id}', 'EventsController@show');
 
-    Route::get("images/{filename}",function($filename){
 
-        $path = public_path()."/images/events/".$filename;
-        if(file_exists($path)) {
-            $img = (file_get_contents($path));
-            $response = Response::make($img);
-            $response->header('Content-Type', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path));
-            return $response;
-        }
-
-        return "";
-
-
-    });
 });
+
+
+// NO CAS
+
+Route::get("events/images/{filename}",function($filename){
+
+    $path = public_path()."/images/events/".$filename;
+    if(file_exists($path)) {
+        $img = (file_get_contents($path));
+        $response = Response::make($img);
+        $response->header('Content-Type', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path));
+        return $response;
+    }
+
+    return "";
+
+
+});
+
+
+// API Controller
+Route::group(['prefix'=>'api'],function(){
+    Route::get('/types', 'APIController@types');
+    Route::get('/venues', 'APIController@venues');
+    Route::get('/events', 'APIController@events');
+    Route::get('/blog', 'BlogController@index');
+});
+
 
 

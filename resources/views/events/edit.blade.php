@@ -6,8 +6,8 @@
 
 {{Form::open(array('url'=>'events/update','files' => true, 'method' => 'post'))}}
 
-{{ Html::ul($errors->all(),array('class'=>'no-bullet')) }}
-        <!--- Summary -->
+@include('partials._formerrors')
+ <!--- Summary -->
 <div class="row">
     <div class="small-8 large-10 columns">
         <div class="row">

@@ -23,8 +23,6 @@ class Event extends BaseModel
         return $this->belongsToMany('Attachement', 'event_attachement','unique_id','event_id');
     }
 
-
-
     public function categories(){
         return $this->belongsToMany('Category',
             'event_category','id','event_id');
@@ -42,14 +40,19 @@ class Event extends BaseModel
             ->whereEventId($this->unique_id);
     }
 
-
     public function venue(){
         return $this->hasOne("ArtsAndHumanities\Models\Venue","id","venue_id");
     }
 
-
     public function schedules(){
-        return $this->hasMany('ArtsAndHumanities\Models\Schedule','event_id','unique_id');
+        return $this->hasMany('ArtsAndHumanities\Models\Schedule','event_id','unique_id')
+            ->selectRaw(" event_id,
+start_date_time,
+DATE_FORMAT(start_date_time,'%b %d %Y') start_date,
+LOWER(TIME_FORMAT(start_date_time, '%l:%i %p')) start_time,
+end_date_time,
+DATE_FORMAT(end_date_time,'%b %d %Y') end_date,
+LOWER(TIME_FORMAT(end_date_time, '%l:%i %p')) end_time");
     }
 
     public $type_ids;

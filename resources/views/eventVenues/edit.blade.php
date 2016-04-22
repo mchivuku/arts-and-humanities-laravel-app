@@ -7,9 +7,8 @@
 
 {!! Html::beginSection($form_title,'bg-none',true) !!}
 
-        <!-- display errors -->
-    {{ Html::ul($errors->all(),array('class'=>'no-bullet')) }}
 
+@include('partials._formerrors')
     {{ Form::model($model, array('route' => array('eventVenues.update', $model->id),
      'method' => 'PUT')) }}
     @include('partials._form')

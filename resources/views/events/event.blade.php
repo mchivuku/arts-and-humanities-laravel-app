@@ -6,6 +6,8 @@
     <div class="content">
         <h1 class="title">{{$event->summary}}</h1>
 
+        @if(count($event->schedules)>1)
+
         <dl class="accordion" role="tablist">
             <dt role="tab" tabindex="0">Schedule</dt>
             <dd role="tabpanel" class="content">
@@ -14,6 +16,9 @@
                 @endforeach
             </dd>
         </dl>
+        @else
+            <p class="meta date">{{$event->schedules[0]}}</p>
+        @endif
 
         @if($event->types!="")
             <p class=" event-type">Event type: {{$event->types}}</p>
@@ -24,7 +29,7 @@
 
         <p class="inline" style="margin-top: 20px;">
             <a class="button " href="#">More Details </a>&nbsp;
-            <a class="button " href="{{Url::to("/events/edit",array('id'=>$event->id))}}">Edit</a></p>
+            <a class="button " href="{{URL::to("/events/edit",array('id'=>$event->id))}}">Edit</a></p>
     </div>
 
 
