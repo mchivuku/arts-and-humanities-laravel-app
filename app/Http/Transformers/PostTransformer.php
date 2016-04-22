@@ -39,7 +39,7 @@ class PostTransformer extends TransformerAbstract
         return [
             'guid' => $post->guid,
             'post_title'=>$post->post_title,
-            'post_content' => $this->base_transformer->truncateDesc($html,500,$post->guid),
+            'post_content' => $this->base_transformer->truncateDesc($html,500),
             'post_date'=>date('l, F j, Y',strtotime($post->post_date))
 
         ];

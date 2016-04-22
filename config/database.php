@@ -78,6 +78,19 @@ return [
             'schema' => 'public',
         ],
 
+        'wordpress' => [
+            'driver'    => 'mysql',
+            'host'      => 'mysql.iu.edu',
+            'port'      => '3654',
+            'database'  => 'wordpress_blogs',
+            'username'  => 'viewpnts',
+            'password'  => 'viewpoints blog for newsroom',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => 'wpn_7_',
+            'strict'    => false,
+            'engine'    => null,
+        ]
     ],
 
     /*

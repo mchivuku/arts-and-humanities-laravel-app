@@ -21,6 +21,11 @@ class EventTransformer extends TransformerAbstract
     public function __construct($params = [])
     {
         $this->params = $params;
+        if(isset($params['schedulerOrderByToday']))
+        {
+            $this->defaultIncludes=['schedulerOrderByToday','venue','types'];
+        }
+
         $this->base_transformer = new BaseTransformer();
 
     }
@@ -51,11 +56,14 @@ class EventTransformer extends TransformerAbstract
 
     }
 
-
     public function includeSchedules(Models\Event $event)
     {
 
         return $this->collection($event->schedules, new EventScheduleTransformer($this->params));
+    }
+
+    public function includeSchedulerOrderByToday(Models\Event $event){
+        return $this->collection($event->schedulesOrderByToday, new EventScheduleTransformer($this->params));
     }
 
     public function includeVenue(Models\Event $event)

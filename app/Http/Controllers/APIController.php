@@ -121,7 +121,6 @@ class APIController extends BaseController
             $paginator = $paginator->where('venue_id', '=', $venueId);
         }
 
-
         $paginator = $paginator->paginate($this->perPage);
 
         $events = $paginator->getCollection();
@@ -137,4 +136,12 @@ class APIController extends BaseController
         return $this->fractal->createData($resource)->toJson();
     }
 
+
+    /** Featured events for homepage */
+    public function featuredEvents(){
+        $events = Models\Event::take(3)->with('schedulesOrderByToday')->get();
+
+        $resource = new Collection($events, new EventTransformer(['short'=>true,'schedulerOrderByToday'=>true]));
+        return $this->fractal->createData($resource)->toJson();;
+    }
 }

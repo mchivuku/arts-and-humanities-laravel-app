@@ -65,6 +65,7 @@ Route::group(['prefix'=>'api'],function(){
     Route::get('/types', 'APIController@types');
     Route::get('/venues', 'APIController@venues');
     Route::get('/events', 'APIController@events');
+    Route::get('/featured','APIController@featuredEvents');
     Route::get('/blog', 'BlogController@index');
 });
 

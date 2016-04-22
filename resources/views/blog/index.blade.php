@@ -7,10 +7,12 @@
 
         <p class="meta date">{{$post['post_date']}}</p>
         <div itemprop="description">
-            {!! $post['post_content'] !!}
+            {!! $post['post_content'] !!}...<a href="{{$post['guid']}}" itemprop="url" class="external">Read More &#187;</a>
+            <p></p>
         </div>
 
     </div>
 </article>
 
 @endforeach
+<a href="http://viewpoints.iu.edu/art-at-iu/" class="more button external">View all events	</a>

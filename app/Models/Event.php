@@ -53,10 +53,20 @@ LOWER(TIME_FORMAT(start_date_time, '%l:%i %p')) start_time,
 end_date_time,
 DATE_FORMAT(end_date_time,'%b %d %Y') end_date,
 LOWER(TIME_FORMAT(end_date_time, '%l:%i %p')) end_time");
+
     }
 
-    public $type_ids;
+    public function schedulesOrderByToday(){
+        return $this->hasMany('ArtsAndHumanities\Models\Schedule','event_id','unique_id')
+            ->selectRaw(" event_id,
+start_date_time,
+DATE_FORMAT(start_date_time,'%b %d %Y') start_date,
+LOWER(TIME_FORMAT(start_date_time, '%l:%i %p')) start_time,
+end_date_time,
+DATE_FORMAT(end_date_time,'%b %d %Y') end_date,
+LOWER(TIME_FORMAT(end_date_time, '%l:%i %p')) end_time")
+            ->orderByRaw("(case when DATEDIFF(date(event_schedule.start_date_time), NOW()) < 0 then 1 else 0 end),
+            abs(DATEDIFF(date(event_schedule.start_date_time),NOW() ) )");
 
-
-
+    }
 }

@@ -28,9 +28,8 @@ class BlogController extends BaseController{
 
     public function index(){
 
-        $limit = Input::get('limitBy');
-
-        $posts = Models\ViewPointsPost::status('publish')->orderBy('post_date', 'DESC')->take(5)->get();
+        $limit = 3;
+        $posts = Models\ViewPointsPost::status('publish')->orderBy('post_date', 'DESC')->take($limit)->get();
 
         $posts=$this->fractal
             ->createData(new Collection($posts, new PostTransformer))->toArray();

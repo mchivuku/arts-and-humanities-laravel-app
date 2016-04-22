@@ -21,7 +21,7 @@ class BaseTransformer{
         }
         else {
             $string = substr($string, 0, $limit);
-            $string = $this->cleanTags($string." ...", $url);
+            $string = $this->cleanTags($string, $url);
             //$string.=$url;
             return $string;
         }
@@ -70,7 +70,7 @@ class BaseTransformer{
         $xpath = new \DomXPath($dom_document_append);
 
         // new node will be inserted before this node
-        $next =   $xpath->query("p");
+        $next = $xpath->query("p");
 
         $text = $dom_document_append->createTextNode('...');
         $e = $dom_document_append->createElement('a', 'Read More &#187;');
@@ -89,8 +89,6 @@ class BaseTransformer{
                     if($url!="")
                         $dom_document_append->lastChild->insertBefore($e);
                 }
-
-
             }else{
 
                 $dom_document_append->appendChild($text);

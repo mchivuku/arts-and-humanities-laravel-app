@@ -21,11 +21,12 @@
 
     {!! Form::close() !!}
 
-
+<hr/>
      {!! Html::endSection(true) !!}
 
      <!-- search results -->
      {!! Html::BeginSection("",'bg-none',false,true) !!}
+
 
     <div id="search-results">
         @include('events.results')
