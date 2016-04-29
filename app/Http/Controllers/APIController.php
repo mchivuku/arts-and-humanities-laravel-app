@@ -17,14 +17,12 @@ use Illuminate\Support\Facades\Input as Input;
 use League\Fractal\Manager;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item as Item;
 
 class APIController extends BaseController
 {
-
     protected $fractal;
-
     protected $perPage = 10;
-
 
     public function __construct(Manager $fractal)
     {
@@ -92,13 +90,13 @@ class APIController extends BaseController
         }
 
         // load today by default
-        if(!isset($day) && !isset($date)){
+        if (!isset($day) && !isset($date)) {
             $today = date('Y-m-d');
 
             $paginator = $paginator
                 ->whereRaw('unique_id IN (select event_id from event_schedule WHERE
                         date(start_date_time)="' . $today . '")');
-         }
+        }
 
 
         //filter type
@@ -138,10 +136,29 @@ class APIController extends BaseController
 
 
     /** Featured events for homepage */
-    public function featuredEvents(){
-        $events = Models\Event::take(3)->with('schedulesOrderByToday')->get();
+    public function featuredEvents()
+    {
+        $events = \DB::select(\DB::raw("select unique_id,summary, (select start_date_time FROM event_schedule where
+event_schedule.event_id=event.unique_id order by
+CASE WHEN DATEDIFF(`start_date_time`, CURDATE())  < 0 THEN 1 ELSE 0 END, DATEDIFF(`start_date_time`, CURDATE())
+LIMIT 1) start_date from
+event
+where
+(select start_date_time FROM event_schedule where
+event_schedule.event_id=event.unique_id order by
+CASE WHEN DATEDIFF(`start_date_time`, CURDATE())  < 0 THEN 1 ELSE 0 END, DATEDIFF(`start_date_time`, CURDATE())
+LIMIT 1)>=CURDATE() limit 3"));
 
-        $resource = new Collection($events, new EventTransformer(['short'=>true,'schedulerOrderByToday'=>true]));
-        return $this->fractal->createData($resource)->toJson();;
+        return response()->json(['data' => $events]);
+
+    }
+
+    public function show($id){
+        $event = Models\Event::with('schedules')->with('contacts')->find($id);
+
+        $resource = new Item($event, new EventTransformer(['includes'=>['schedules']]));
+
+        return $this->fractal->createData($resource)->toJson();
+
     }
 }

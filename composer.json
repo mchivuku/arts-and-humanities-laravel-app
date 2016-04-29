@@ -9,7 +9,8 @@
         "laravel/framework": "5.2.*",
         "laravelcollective/html": "5.2.*",
         "league/fractal": "^0.13.0",
-        "jgrossi/corcel": "~1.0.0"
+        "jgrossi/corcel": "~1.0.0",
+        "yajra/laravel-datatables-oracle": "^6.10"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -4,7 +4,6 @@
   background: #900 none repeat scroll 0 0;
 }
 
-
 .datepicker thead tr th{background:#900}
 
  .datepicker .prev:before{color:#fff;position:absolute}
@@ -19,3 +18,65 @@
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
   border-right: 5px solid #fff}
+
+ .artsbl-form, .artsbl-form h2, .artsbl-form h3, .artsbl-form h4, .artsbl-form h5,.artsbl-form
+ .form-item-input p
+  {
+  font-family: BentonSansRegular,"Arial Narrow",Arial,sans-serif;
+  font-weight: 400;
+}
+.artsbl-form
+.form-item-input p{
+  font-size:1rem;
+}
+
+ #events-table_info{
+   font-size:16px;
+ }
+
+/* Fix overrides on buttons from Foundation */
+.button-group > li:first-child .button,
+.button-group > li:first-child button,
+.button-group > li .button,
+.button-group > li button {
+  border: 2px solid #990000;
+}
+
+/* Correct padding across form items */
+.artsbl-form .form-item,
+.artsbl-form .accordion {
+  margin-bottom: 2rem;
+}
+
+.artsbl-form .form-item-label {
+  font-family: BentonSansBold,"Helvetica Neue",Helvetica,Helvetica,Arial,sans-serif;
+}
+
+.artsbl-form hr {
+  margin: 0 0 2rem 0;
+}
+
+.artsbl-form .button-group.right li:first-child {
+  margin-right: .5rem;
+}
+
+/* Accordion line-height */
+.js .accordion dt:after {
+  line-height: 39px;
+}
+
+/* Choose file text too large */
+input[type=file] {
+  font-size: 1rem;
+}
+
+/* Processing */
+#events-table_processing {
+  /* border-radius: 50px; */
+  background: #990000;
+  color: #fff;
+}
+
+#events-table_processing .panel:before {
+  height: 0;
+}

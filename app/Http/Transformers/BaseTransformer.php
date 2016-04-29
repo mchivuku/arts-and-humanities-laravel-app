@@ -27,8 +27,6 @@ class BaseTransformer{
         }
     }
 
-
-
     public static function cleanTags($string, $url=""){
          $dom_document = new \DOMDocument();
 
@@ -101,4 +99,28 @@ class BaseTransformer{
         return  $dom_document_append->saveXML();
     }
 
+    public function getRepeatMessage($event_url){
+
+        if($event_url=="")return;
+
+        $html = file_get_contents($event_url);
+
+        $dom_xml= new \DOMDocument();
+        @$dom_xml->loadHTML($html);
+
+        $xpath = new \DOMXPath($dom_xml);
+        $content="";
+
+        $repeat_node = $xpath->query('//div[@class="repeat-message"]/node()')->item(0);
+
+        if(isset($repeat_node)){
+            $a_node = $xpath->query("//div[@class='repeat-message']//a")->item(0);
+            $repeat_node->removeChild($a_node);
+            $content .=   $dom_xml->saveXML($repeat_node);
+            return str_replace(")","",str_replace("(","",$content));
+
+        }
+
+        return "";
+    }
 }

@@ -3,7 +3,7 @@
 
 
 @section('content')
-{!! Html::beginSection($form_title,'bg-none',true) !!}
+{!! Html::beginSection('','bg-none',true) !!}
 
 @include('partials._formerrors')
 

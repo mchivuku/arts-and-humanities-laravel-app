@@ -174,6 +174,7 @@ return [
         ArtsAndHumanities\Providers\RouteServiceProvider::class,
 
         ArtsAndHumanities\Providers\CustomMacroServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class,
 
         /*
         * Clockwork
@@ -229,6 +230,7 @@ return [
 
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Datatables' => Yajra\Datatables\Facades\Datatables::class,
 
 
         'Clockwork'=>'\Clockwork\Support\Laravel\Facade'

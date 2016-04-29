@@ -10,14 +10,20 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::get('/', function(){
+    if(\Session::get('user')=='') return Redirect::to('login');
+    return Redirect::to('events');
+});
 
-Route::get('/', [
-     'uses' => 'HomeController@index'
-]);
+
+Route::get('/login','HomeController@login' );
+
+
 
 //Event Types
 Route::group(['middleware' => 'cas'], function()
 {
+
 
 
     Route::resource('eventTypes', 'EventTypesController');
@@ -33,10 +39,12 @@ Route::group(['middleware' => 'cas'], function()
 //Events
 Route::group(['prefix' => 'events','middleware' => 'cas'], function () {
     Route::get('/', 'EventsController@index');
+    Route::get('/data', 'EventsController@getEvents');
     Route::get('/results', 'EventsController@results');
     Route::get('/edit/{id}', 'EventsController@edit');
     Route::post('/update', 'EventsController@update');
     Route::get('/show/{id}', 'EventsController@show');
+    Route::get('/schedule/{id}', 'EventsController@getSchedules');
 
 
 });
@@ -66,6 +74,7 @@ Route::group(['prefix'=>'api'],function(){
     Route::get('/venues', 'APIController@venues');
     Route::get('/events', 'APIController@events');
     Route::get('/featured','APIController@featuredEvents');
+    Route::get('/event/{id}', 'APIController@show');
     Route::get('/blog', 'BlogController@index');
 });
 

@@ -1,74 +1,83 @@
 @extends('layouts.app')
 
-@section('navigation-primary')
-    @include('events._navigation-primary')
-@endsection
-
 @section('content')
+    {!! Html::beginSection($section_title,'bg-none',true) !!}
 
-     {!! Html::beginSection("Event Lookup",'bg-none',true) !!}
+        <div class="grid thirds">
+    <!-- status select dropdown -->
+    {!! Form::formGroup(Form::label('select review type', 'Select review status') ,
+    Form::select('reviewId',$reviews,$review_id,array('id'=>'review'))) !!}
+        </div>
 
-    <!-- Search Form -->
-    {!! Form::open(array('url' => 'events','method' => 'get'),array('class'=>'filter')) !!}
-
-    <div class="grid halves">
-
-        {!! Form::formGroup(Form::label('event-title', 'Event Title:') ,Form::text('title','',array('id'=>'title'))) !!}
-        {!! Form::formGroup(Form::label('event-date', 'Event Date:') ,Form::text('date','',array('id'=>'dpd1','class'=>'span2'))) !!}
-
-
+    <!-- Events table - with dataTables -->
+    <div id="results">
+    <table class="table table-bordered" id="events-table">
+        <thead>
+        <tr>
+            <th>Thumbnail</th>
+            <th>Summary</th>
+            <th>Event Location</th>
+            <th>Event Status</th>
+            <th>Event Schedule</th>
+            <th>Action</th>
+            <th>Link</th>
+        </tr>
+        </thead>
+    </table>
     </div>
+    <div id="viewModal" class="reveal-modal" data-reveal></div>
 
-    {!! Form::close() !!}
+    {!! Html::endSection(true) !!}
 
-<hr/>
-     {!! Html::endSection(true) !!}
-
-     <!-- search results -->
-     {!! Html::BeginSection("",'bg-none',false,true) !!}
-
-
-    <div id="search-results">
-        @include('events.results')
-    </div>
-
-     {!! Html::endSection(true) !!}
 
 @endsection
+
 
 
 @section('page-js')
-    <script type="text/javascript" src="{{asset("js/foundation-datepicker.min.js")}}"></script>
-
+    <script type="text/javascript" src="{{asset("js/table.min.js")}}"></script>
     <script type="text/javascript">
-        $(document).ready(function(){
-            $('#dpd1').fdatepicker();
+        $(function() {
 
-            //function title change
-            $('#title').keyup(function() {
-                   getResults();
+            $('#review').change(function(){
+                $.get("{{URL::to("events?")}}review="+$(this).val(),function(response){
+                   html= $(response).find("#results").html();
+                    title = $(response).find('.section-title').html();
+                      $('#results').empty().html(html);
+                      $('.section-title').empty().html(title);
+                       DataTablesInit();
+                })
             });
 
-            $('#dpd1').change(function(){
-                getResults();
-            });
+            DataTablesInit();
+            // onselect
+
         });
 
-        function getResults() {
-
-            data = $('form').serialize();
-            $('#search-results').html('<img src="{{asset("/css/img/ajax-loader.gif")}}"/>');
-
-            $.get('{{Url::to("events/results")}}',data,function(content){
-                 $('#search-results').empty().html(content);
-                IUComm.uiModules['accordion'].init();
+        function DataTablesInit(){
+            $('#events-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{!! URL::to('events/data')."?review=" !!}'+$('#review').val(),
+                columns: [
+                    { data: 'thumbnail', name: 'thumbnail' },
+                    { data: 'summary', name: 'summary' },
+                    { data: 'location', name: 'location' },
+                    { data: 'status', name: 'status' },
+                    { data: 'schedule', name: 'schedule' },
+                    { data: 'action',name:'action'},
+                    {data:'link',name:'link'}
+                ]
             });
+
         }
 
+        function loadSchedule(value){
 
+               $.get($(value).attr('href'),function(data){
+                    $('#viewModal').empty().html(data);
+                });
 
-
-
-
+        }
     </script>
 @endsection

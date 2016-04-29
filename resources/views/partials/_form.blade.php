@@ -8,8 +8,9 @@ Form::text('description',isset($model->description)?$model->description:"")) !!}
 @endif
 
 <div class="grid right">
+    <input type="button" class="button invert clear" value="Clear">
     <input type="submit" id="save" name="save" value="Save" class="button">
-    <input type="button"  class="button invert clear" value="Clear">
+
 </div>
 
 

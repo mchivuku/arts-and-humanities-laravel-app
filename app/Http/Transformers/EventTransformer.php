@@ -21,10 +21,12 @@ class EventTransformer extends TransformerAbstract
     public function __construct($params = [])
     {
         $this->params = $params;
-        if(isset($params['schedulerOrderByToday']))
+
+        if(isset($params['includes']))
         {
-            $this->defaultIncludes=['schedulerOrderByToday','venue','types'];
+            $this->defaultIncludes=$params['includes'];
         }
+
 
         $this->base_transformer = new BaseTransformer();
 
@@ -37,9 +39,8 @@ class EventTransformer extends TransformerAbstract
      */
     public function transform(Models\Event $event)
     {
-        $short = $this->params['short'];
 
-        if ($short)
+        if (isset($this->params['short']))
             return [
                 'id' => $event->unique_id,
                 'description' => $this->base_transformer->truncateDesc($event->description, 250),
@@ -50,9 +51,34 @@ class EventTransformer extends TransformerAbstract
                     isset($event->website_image_url_small) &&
                     $event->website_image_url_small != '' ?
                         \URL::to("events/images/" . basename($event->website_image_url_small)) :
-                        $event->image_url_small
+                        $event->image_url_small,
+                'repeat_message'=>$this->base_transformer->getRepeatMessage($event->event_url)
 
             ];
+
+
+        return [
+            'id' => $event->unique_id,
+            'description' => $event->description,
+            'short_description' => $event->short_description,
+            'summary'=>$event->summary,
+            'event_url'=>$event->event_url,
+            'thumbnail_url' =>
+                isset($event->website_image_url_small) &&
+                $event->website_image_url_small != '' ?
+                    \URL::to("events/images/" . basename($event->website_image_url_small)) :
+                    $event->image_url_small,
+
+            'large_image_url' => $event->image_url_large,
+            'cost'=>$event->cost,
+            'contact_email'=>$event->contact_email,
+            'more_contact_info'=>$event->more_contact_info,
+            'other_info'=>$event->other_info,
+            'contacts'=>$event->contacts()->get()->implode('contact_info', ', '),
+            'repeat_message'=>$this->base_transformer->getRepeatMessage($event->event_url)
+
+        ];
+
 
     }
 
@@ -62,7 +88,7 @@ class EventTransformer extends TransformerAbstract
         return $this->collection($event->schedules, new EventScheduleTransformer($this->params));
     }
 
-    public function includeSchedulerOrderByToday(Models\Event $event){
+    public function includeSchedulesOrderByToday(Models\Event $event){
         return $this->collection($event->schedulesOrderByToday, new EventScheduleTransformer($this->params));
     }
 
@@ -78,6 +104,10 @@ class EventTransformer extends TransformerAbstract
         $types = $event->types;
         if (isset($types))
             return $this->collection($types, new EventTypeTransformer());
+    }
+
+    public function getRepeatMessage(Models\Event $event){
+
     }
 
 }

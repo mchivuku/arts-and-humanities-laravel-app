@@ -52,7 +52,8 @@ class EventTypesController extends Controller
      */
     public function create()
     {
-        return view('eventTypes.create')->with('pageTitle','Create event type')->with('form_title','Create event type');
+        return view('eventTypes.create')->with('pageTitle','Create event type')
+            ;
     }
 
     /**

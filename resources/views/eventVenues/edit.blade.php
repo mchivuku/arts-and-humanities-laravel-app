@@ -5,7 +5,7 @@
 
 @section('content')
 
-{!! Html::beginSection($form_title,'bg-none',true) !!}
+{!! Html::beginSection("",'bg-none',true) !!}
 
 
 @include('partials._formerrors')
@@ -17,10 +17,6 @@
 
 {!! Html::endSection(true) !!}
 
-@endsection
-
-@section('navigation-mobile')
-    @include('eventVenues._navigation-mobile')
 @endsection
 
 

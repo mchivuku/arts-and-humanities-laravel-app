@@ -2,17 +2,17 @@
 
 namespace ArtsAndHumanities\Http\Controllers;
 
+use ArtsAndHumanities\Http\Requests;
 use ArtsAndHumanities\Models as Models;
 use ArtsAndHumanities\Models\ViewModels as VM;
-use ArtsAndHumanities\Http\Requests;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Input as Input;
-use Mockery\CountValidator\Exception;
+use Yajra\Datatables\Datatables;
+
 
 class EventsController extends Controller
 {
-    protected  $perPage = 10;
+    protected $perPage = 10;
 
     public function __construct()
     {
@@ -20,121 +20,180 @@ class EventsController extends Controller
         parent::__construct();
     }
 
-    /** Load the search form with events. */
-    protected function getEvents($params=[]){
 
-        $events  = Models\Event::select('unique_id','summary','image_url_small');
+    public function index()
+    {
 
-        if(isset($params['title']))
-            $events= $events->where('summary','like',"%".$params['title']."%");
+        $review_id = Input::get('review');
 
-        if(isset($params['date']) && $params['date']!=""){
-             $date = date('Y-m-d',strtotime($params['date']));
-             $events= $events->whereRaw('unique_id IN (select event_id from event_schedule WHERE
-                        date(start_date_time)="'. $date .'")');
+        $reviews['all'] = 'All Events';
+        $dbreviews = Models\Review::all()->toArray();
+        foreach ($dbreviews as $review) {
+            $reviews[$review['id']] = 'All  ' . $review['description'] . " Events";
         }
 
-        $events = $events->paginate($this->perPage);
-        $result=null;
+        if (isset($review_id) && $review_id != "all") {
+            $events = Models\Event::with('types')->with('venue')
+                ->with('review')
+                ->where('review_id', '=', $review_id)
+                ->select('unique_id', 'summary', 'image_url_small',
+                    'location', 'website_image_url_small', 'review_id')->get();
+        } else {
+            $events = Models\Event::with('types')
+                ->with('review')->with('venue')->get();
+        }
 
-        foreach($events as $event){
 
-            $vm = new VM\LookupEventVM();
-            $vm->summary = $event->summary;
-            $vm->id = $event->unique_id;
+        return view('events.index')
+            ->with('events', $this->buildEventData($events))
+            ->with('reviews', $reviews)
+            ->with('pageTitle', 'Manage Events')
+            ->with('review_id', $review_id)
+            ->with('section_title',
+                isset($review_id) && $review_id != "" ?
+                    $reviews[$review_id] : "All Events");
+    }
 
-            $vm->image_url_small = $event->image_url_small;
+    /** Helpers */
+    private function buildEventData($data)
+    {
+        $events = new Collection;
 
-            $vm->types = isset($types)?implode(",",$types):"";
+        foreach ($data as $event) {
 
-            $venue = $event->venue;
-            if(isset($venue))
-                $vm->venue = $venue->description;
+            $thumbnail = $event->website_image_url_small != "" ?
+                asset("images/events/" . basename($event->website_image_url_small))
+                : $event->image_url_small;
 
-            $vm->schedules = array_map(function($item){
+            if ($thumbnail == "") $thumbnail = "#";
 
-                $start_date = date('Y-m-d',strtotime($item['start_date_time']));
-                $end_date = date('Y-m-d',strtotime($item['end_date_time']));
+            $edit = \URL::to("/events/edit" . '/' . $event->unique_id);
+            $schedule_link = \URL::to("/events/schedule" . '/' . $event->unique_id);
+            $venue = $event->venue()->first();
+            $status = $event->review()->first()->description;
+            $website_link = $_ENV['HOME_PATH'] . "/calendar/event?id=" . $event->unique_id;
 
-                if($start_date==$end_date){
-                    return
-                        date('l jS F Y, g:ia ',strtotime($item['start_date_time']))." - ".
-                        date('g:ia ',strtotime($item['end_date_time']));
-                }
+            $events->push([
+                'id' => $event->unique_id,
+                'thumbnail' => $thumbnail,
+                'summary' => $event->summary,
+                'location' => $event->location,
+                'featured_venue' => isset($venue) ? $event->venue()->first()->description : "",
+                'event_types' => implode(", ",
+                    array_map(function ($item) {
+                        return $item['description'];
+                    },
+                        $event->types()->get()->toArray())),
+                'status' => $status,
+                'schedule' => "<a data-reveal-id=\"viewModal\" onclick=\"loadSchedule(this);return false;\" href='" . $schedule_link . "' class=\"modal\" >View Schedule</a>",
+                'action' => "<a href='$edit'>Edit</a>",
+                'link' => '<a target=\"_blank\" href="' . $website_link . '">View on the website</a>'
+            ]);
+        }
+
+        return Datatables::of($events)->
+        editColumn('thumbnail', function ($event) {
+            if ($event['thumbnail'] == '#')
+                return "";
+            return '<a target="_blank" class="th" href="' . $event['thumbnail'] . '">
+                                <img aria-hidden=true src="' . $event['thumbnail'] . '"/></a>';
+
+        })->make(true);
+
+
+    }
+
+    public function getEvents()
+    {
+        $review_id = Input::get('review');
+
+        if (isset($review_id) && $review_id != "all") {
+            $events = Models\Event::with('types')->with('venue')->with('review')
+                ->where('review_id', '=', $review_id)
+                ->select('unique_id', 'summary',
+                    'image_url_small', 'location', 'website_image_url_small', 'review_id')->get();
+        } else {
+            $events = Models\Event::with('types')->with('venue')
+                ->with('review')
+                ->select('unique_id', 'summary', 'image_url_small',
+                    'location', 'website_image_url_small', 'venue_id', 'review_id')->get();
+        }
+
+
+        return $this->buildEventData($events);
+    }
+
+    public function getSchedules($id)
+    {
+        $event = Models\Event::with('schedules')
+            ->where('unique_id', '=', $id)->first();
+
+        $schedules = array_map(function ($item) {
+
+            $start_date = date('Y-m-d', strtotime($item['start_date_time']));
+            $end_date = date('Y-m-d', strtotime($item['end_date_time']));
+
+            if ($start_date == $end_date) {
                 return
-                    date('l jS F Y, g:ia ',strtotime($item['start_date_time']))."to ".
-                    date('l jS F Y, g:ia ',strtotime($item['end_date_time']));
+                    date('l jS F Y, g:ia ', strtotime($item['start_date_time'])) . " - " .
+                    date('g:ia ', strtotime($item['end_date_time']));
+            }
+            return
+                date('l jS F Y, g:ia ', strtotime($item['start_date_time'])) . "to " .
+                date('l jS F Y, g:ia ', strtotime($item['end_date_time']));
 
-            },
-                $event->schedules->toArray());
+        },
 
-            $result[]=$vm;
+            $event->schedules->toArray());
+
+
+        $modal = new \StdClass();
+        if (isset($schedules)) {
+            $modal->content = view('events.schedule', array('schedules' => $schedules));
+            $modal->title = 'Event Schedule &mdash;' . $event->summary;
+
+        } else {
+            $modal->title = 'Not Found';
+            $modal->content = 'Schedules not found.';
         }
 
-
-        return array('data'=>$result,'links'=>$events->links());
+        return view('partials._modal', array('model' => $modal));
 
     }
-
-    public function index(){
-        $result = $this->getEvents();
-        return view('events.index')->with('events',$result)->with('pageTitle','Manage Events');
-    }
-
-    public function results(){
-
-        $title = Input::get('title');
-        $date = Input::get('date');
-
-        $params['title']=$title;
-        $params['date']=$date;
-
-        $result = $this->getEvents($params);
-
-        return view('events.results')->with('events',$result);
-    }
-
 
     /**
      * Edit Event
      */
-    public function edit($id){
-        $event  = Models\Event::with('types')->where('unique_id','=',$id)
+    public function edit($id)
+    {
+        $event = Models\Event::with('types')->where('unique_id', '=', $id)
             ->first();
 
-        $types_db = Models\Type::all();
-        $venues_db = Models\Venue::all();
+        $types_db = Models\Type::all()->lists('description', 'id');
+        $venues_db = Models\Venue::all()->lists('description', 'id');
 
-        $build_select= function($data){
-            $result=[];
-            foreach($data as $x){
-                $result[$x->id]=$x->description;
-            }
-            return $result;
-        };
 
         return view('events.edit')
-            ->with('event',$event)
-            ->with('types',$build_select($types_db))
-            ->with('venues',$build_select($venues_db))
-            ->with('pageTitle','Edit Event');;
+            ->with('event', $event)
+            ->with('types', $types_db)
+            ->with('reviews', Models\Review::all()->lists('description', 'id'))
+            ->with('venues', $venues_db)
+            ->with('pageTitle', 'Edit Event');;
 
     }
-
 
     /**
      * Function to update event information - include update for venue, event type, thumbnail, featured
      * @param Requests\EventFormRequest $request
      */
-    public function update(Requests\EventFormRequest $request){
-
-
-        $event = Models\Event::where('unique_id','=',$request->id)->first();
+    public function update(Requests\EventFormRequest $request)
+    {
+        $event = Models\Event::where('unique_id', '=', $request->id)->first();
 
         // remove existing ones
         $event->types()->detach();
 
-        \DB::transaction(function ()use($event,$request) {
+        \DB::transaction(function () use ($event, $request) {
 
             // update - short_description;student_pick,faculty_only, faculty_enrichment
             // venue, event types,recommendation text
@@ -169,6 +228,7 @@ class EventsController extends Controller
             // update event table
             $event->short_description = $request['short_description'];
             $event->student_pick = $request['student_pick'];
+            $event->review_id = $request['reviewId'];
 
             $event->faculty_only = $request['faculty_only'];
             $event->faculty_enrichment = $request['faculty_enrichment'];
@@ -176,10 +236,11 @@ class EventsController extends Controller
 
             // remove existing ones
 
-            foreach ($request['event_types'] as $type) {
-
-               $event->types()->attach($type,
-                   ['update_user'=>$this->currentUser]);
+            if (isset($request['event_types'])) {
+                foreach ($request['event_types'] as $type) {
+                    $event->types()->attach($type,
+                        ['update_user' => $this->currentUser]);
+                }
 
             }
 
@@ -192,15 +253,20 @@ class EventsController extends Controller
 
         //redirect to show page
         \Session::flash('message', 'Successfully updated the event!');
-        return redirect()->action('EventsController@show', ['id'=>$event->unique_id]);
+        return redirect()->action('EventsController@show', ['id' => $event->unique_id]);
 
     }
 
-    public function show($id){
+    public function show($id)
+    {
 
-        $event = Models\Event::with('types')->with('venue')->find($id);
-        return view('events.show')->with('event',$event)->with('pageTitle','Event &mdash;'.$event->summary);
+        $event = Models\Event::with('types')
+            ->with('venue')->with('review')->find($id);
+
+        return view('events.show')->with('event', $event)
+            ->with('pageTitle', 'Event &mdash;' . $event->summary);
 
     }
+
 
 }

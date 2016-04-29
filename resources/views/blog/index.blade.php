@@ -15,4 +15,4 @@
 </article>
 
 @endforeach
-<a href="http://viewpoints.iu.edu/art-at-iu/" class="more button external">View all events	</a>
+<a href="http://viewpoints.iu.edu/art-at-iu/" class="more button external">Read more Art at IU</a>
