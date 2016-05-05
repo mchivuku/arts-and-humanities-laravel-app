@@ -75,7 +75,8 @@ class EventTransformer extends TransformerAbstract
             'more_contact_info'=>$event->more_contact_info,
             'other_info'=>$event->other_info,
             'contacts'=>$event->contacts()->get()->implode('contact_info', ', '),
-            'repeat_message'=>$this->base_transformer->getRepeatMessage($event->event_url)
+            'repeat_message'=>$this->getRepeatMessage($event),
+            'url'=>$event->url
 
         ];
 
@@ -107,7 +108,7 @@ class EventTransformer extends TransformerAbstract
     }
 
     public function getRepeatMessage(Models\Event $event){
-
+        return $this->base_transformer->getRepeatMessage($event->event_url);
     }
 
 }

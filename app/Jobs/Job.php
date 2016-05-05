@@ -3,6 +3,7 @@
 namespace ArtsAndHumanities\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Mockery\CountValidator\Exception;
 
 abstract class Job
 {
@@ -104,6 +105,12 @@ abstract class Job
         $sql = "INSERT INTO {$table}({$columns}) VALUES {$values} ON DUPLICATE KEY UPDATE {$updates}";
 
 
-        return \DB::statement( $sql );
+        try{
+            return  \DB::statement( $sql );
+        }catch(\Exception $ex){
+            var_dump($ex->getMessage());
+        }
+
+
     }
 }

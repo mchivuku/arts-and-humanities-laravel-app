@@ -80,3 +80,26 @@ input[type=file] {
 #events-table_processing .panel:before {
   height: 0;
 }
+
+.table-up:after {
+  content: "↟";
+  font-size:20px;
+}
+
+.table-down:after {
+  content: "↡";
+  font-size:20px;
+}
+
+td:not(.disabled) .table-up, td:not(.disabled)  .table-down {
+  color: #990000;
+  cursor: pointer;
+
+  &:hover {
+    color: #990000;
+  }
+}
+
+#save-order{
+  display:none;
+}

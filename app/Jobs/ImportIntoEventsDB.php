@@ -45,6 +45,7 @@ class ImportIntoEventsDB extends Job
         $url .= "&startDate=" . $this->startdate . "&endDate=" . $this->enddate;
 
 
+
         $xml = file_get_contents($url, false, $context);
         $data = $this->xml($xml);
 
@@ -154,7 +155,6 @@ class ImportIntoEventsDB extends Job
 
             $this->add_isset($row, $e, 'calendar-id', 'calendar_id');
             $this->add_isset($row, $e, 'event-url', 'event_url');
-            $this->add_isset($row, $e, 'event-id', 'event_id');
             $this->add_isset($row, $e, 'summary', 'summary');
             $this->add_isset($row, $e, 'description', 'description');
             $this->add_isset($row, $e, 'location', 'location');
@@ -173,6 +173,8 @@ class ImportIntoEventsDB extends Job
             $this->add_isset($row, $e, 'other-info', 'other_info');
             $this->add_isset($row, $e, 'unique-id', 'unique_id');
             $this->add_isset($row, $e, 'url', 'url');
+            $e['update_user']='jobuser';
+
             $insert_array[] = $e;
 
         }

@@ -115,7 +115,11 @@ class BaseTransformer{
 
         if(isset($repeat_node)){
             $a_node = $xpath->query("//div[@class='repeat-message']//a")->item(0);
-            $repeat_node->removeChild($a_node);
+            if(isset($a_node))
+            {
+                $repeat_node->removeChild($a_node);
+            }
+
             $content .=   $dom_xml->saveXML($repeat_node);
             return str_replace(")","",str_replace("(","",$content));
 

@@ -13,6 +13,20 @@
 {!! Form::formGroup(Form::label('Summary') ,Form::text('summary',$event->summary,
 array('readonly'=>'readonly')))!!}
 
+
+@if($schedule['end_date']!="")
+    {!! Form::formGroup(Form::label('Schedule') ,"<p>".$schedule['start_date'].
+    "&mdash;".$schedule['end_date']."</p>")!!}
+@else
+    {!! Form::formGroup(Form::label('Schedule') ,"<p>".$schedule['start_date']."</p>")!!}
+
+  @endif
+
+@if($schedule['repeat_message']!="")
+{!! Form::formGroup("" ,"<p><em>".$schedule['repeat_message']."</em></p>")!!}
+@endif
+
+
 {!! Form::formGroup(Form::label('Event Url') ,"<h6>".Html::link($event->event_url,$event->event_url)."</h6>")!!}
 
 <dl class="accordion" role="tablist">
@@ -23,7 +37,8 @@ array('readonly'=>'readonly')))!!}
 </dl>
 
 
-{!! Form::formGroup(Form::label('Short description') ,Form::textarea('short_description',$event->short_description,
+{!! Form::formGroup(Form::label('Short description') ,
+Form::textarea('short_description',$event->short_description,
 array('class'=>'ckeditor')))!!}
 
 
@@ -121,8 +136,6 @@ Form::select('event_types',$types,$event->types()->lists('id')->toArray()
             <!-- Approve -->
             {!! Form::label('Review status') !!}
             {!! Form::select('reviewId',$reviews,$event->review_id)  !!}
-
-
 
             <ul class="button-group right">
                 <li> {!! Html::link("/events","Cancel",array('class'=>'button invert')) !!}</li>

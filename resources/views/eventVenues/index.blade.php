@@ -1,14 +1,18 @@
 @extends('layouts.app')
 
-@section('navigation-primary')
-    @include('eventVenues._navigation-primary')
-@endsection
 
 @section('content')
     {!! Html::beginSection("",'bg-none',true) !!}
 
             @if(count($collection)>0)
-            @include("partials._table")
+
+                {{ Form::open(array('action' => 'EventVenuesController@saveOrder','method'=>'POST')) }}
+                @include("partials._table")
+
+
+                {{ Form::close() }}
+
+
             @else
             <p>No event venues found!</p>
             @endif
@@ -17,9 +21,6 @@
 
 @endsection
 
-@section('navigation-mobile')
-    @include('eventVenues._navigation-mobile')
-@endsection
 
 
 @section('page-js')

@@ -28,10 +28,13 @@ Route::group(['middleware' => 'cas'], function()
 
     Route::resource('eventTypes', 'EventTypesController');
     Route::get('/eventTypes/{id}/delete','EventTypesController@delete');
+    Route::post('saveOrder','EventTypesController@saveOrder');
 
-//Event Venues
+
+   //Event Venues
     Route::resource('eventVenues', 'EventVenuesController');
     Route::get('/eventVenues/{id}/delete','EventVenuesController@delete');
+    Route::post('saveOrder','EventVenuesController@saveOrder');
 
 });
 

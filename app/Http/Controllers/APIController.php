@@ -89,6 +89,7 @@ class APIController extends BaseController
                         date(start_date_time)>="' . $today . '" and date(start_date_time)<="' . $seventhdayfromtoday . '")');
         }
 
+
         // load today by default
         if (!isset($day) && !isset($date)) {
             $today = date('Y-m-d');
@@ -119,6 +120,7 @@ class APIController extends BaseController
             $paginator = $paginator->where('venue_id', '=', $venueId);
         }
 
+        $paginator=$paginator->where('review_id','=',2);
         $paginator = $paginator->paginate($this->perPage);
 
         $events = $paginator->getCollection();
@@ -147,7 +149,7 @@ where
 (select start_date_time FROM event_schedule where
 event_schedule.event_id=event.unique_id order by
 CASE WHEN DATEDIFF(`start_date_time`, CURDATE())  < 0 THEN 1 ELSE 0 END, DATEDIFF(`start_date_time`, CURDATE())
-LIMIT 1)>=CURDATE() limit 3"));
+LIMIT 1)>=CURDATE() and review_id=2 limit 3"));
 
         return response()->json(['data' => $events]);
 

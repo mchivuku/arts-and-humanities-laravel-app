@@ -3,6 +3,8 @@
 namespace ArtsAndHumanities\Http\Controllers;
 
 use ArtsAndHumanities\Http\Requests;
+use ArtsAndHumanities\Http\Transformers\BaseTransformer;
+use ArtsAndHumanities\Http\Transformers\EventTransformer;
 use ArtsAndHumanities\Models as Models;
 use ArtsAndHumanities\Models\ViewModels as VM;
 use Illuminate\Database\Eloquent\Collection;
@@ -13,10 +15,12 @@ use Yajra\Datatables\Datatables;
 class EventsController extends Controller
 {
     protected $perPage = 10;
+    protected $transformer;
 
-    public function __construct()
+    public function __construct(EventTransformer $transformer)
     {
 
+        $this->transformer=$transformer;
         parent::__construct();
     }
 
@@ -36,8 +40,9 @@ class EventsController extends Controller
             $events = Models\Event::with('types')->with('venue')
                 ->with('review')
                 ->where('review_id', '=', $review_id)
-                ->select('unique_id', 'summary', 'image_url_small',
-                    'location', 'website_image_url_small', 'review_id')->get();
+                ->select('unique_id', 'summary', 'image_url_small','event_url',
+                    'location', 'website_image_url_small', 'review_id')
+                ->get();
         } else {
             $events = Models\Event::with('types')
                 ->with('review')->with('venue')->get();
@@ -73,10 +78,13 @@ class EventsController extends Controller
             $status = $event->review()->first()->description;
             $website_link = $_ENV['HOME_PATH'] . "/calendar/event?id=" . $event->unique_id;
 
+            $url = $event->event_url;
+
             $events->push([
                 'id' => $event->unique_id,
                 'thumbnail' => $thumbnail,
-                'summary' => $event->summary,
+                'summary' =>$event->summary,
+                'event_url'=>$event->event_url,
                 'location' => $event->location,
                 'featured_venue' => isset($venue) ? $event->venue()->first()->description : "",
                 'event_types' => implode(", ",
@@ -91,14 +99,16 @@ class EventsController extends Controller
             ]);
         }
 
-        return Datatables::of($events)->
-        editColumn('thumbnail', function ($event) {
+      return ( Datatables::of($events)->
+            addColumn('summary_url',function($event){
+            return '<a target="_blank"   href="' . $event['event_url'] . '">' . $event['summary'] . '</a>';
+        })->editColumn('thumbnail', function ($event) {
             if ($event['thumbnail'] == '#')
                 return "";
             return '<a target="_blank" class="th" href="' . $event['thumbnail'] . '">
                                 <img aria-hidden=true src="' . $event['thumbnail'] . '"/></a>';
 
-        })->make(true);
+        })->make(true));
 
 
     }
@@ -128,24 +138,7 @@ class EventsController extends Controller
         $event = Models\Event::with('schedules')
             ->where('unique_id', '=', $id)->first();
 
-        $schedules = array_map(function ($item) {
-
-            $start_date = date('Y-m-d', strtotime($item['start_date_time']));
-            $end_date = date('Y-m-d', strtotime($item['end_date_time']));
-
-            if ($start_date == $end_date) {
-                return
-                    date('l jS F Y, g:ia ', strtotime($item['start_date_time'])) . " - " .
-                    date('g:ia ', strtotime($item['end_date_time']));
-            }
-            return
-                date('l jS F Y, g:ia ', strtotime($item['start_date_time'])) . "to " .
-                date('l jS F Y, g:ia ', strtotime($item['end_date_time']));
-
-        },
-
-            $event->schedules->toArray());
-
+         $schedules = $this->schedules($event);
 
         $modal = new \StdClass();
         if (isset($schedules)) {
@@ -166,19 +159,37 @@ class EventsController extends Controller
      */
     public function edit($id)
     {
-        $event = Models\Event::with('types')->where('unique_id', '=', $id)
+        $start_date="";
+        $end_date="";$repeat_message="";
+
+        $event = Models\Event::with('types')->with('schedules')->where('unique_id', '=', $id)
             ->first();
 
         $types_db = Models\Type::all()->lists('description', 'id');
         $venues_db = Models\Venue::all()->lists('description', 'id');
 
+        $repeat_message = $this->transformer->getRepeatMessage($event);
+        $schedules = $this->schedules($event);
+
+        if(count($schedules)>1){
+            $start_date = $schedules[0];
+            $end_date = last($schedules);
+        }else{
+            $start_date=$schedules[0];
+            $end_date = "";
+        }
+
+
+
 
         return view('events.edit')
             ->with('event', $event)
             ->with('types', $types_db)
+            ->with('schedule',array('start_date'
+            =>$start_date,'end_date'=>$end_date,'repeat_message'=>$repeat_message))
             ->with('reviews', Models\Review::all()->lists('description', 'id'))
             ->with('venues', $venues_db)
-            ->with('pageTitle', 'Edit Event');;
+            ->with('pageTitle', 'Edit Event');
 
     }
 
@@ -202,7 +213,8 @@ class EventsController extends Controller
             if (isset($request['website_thumbnail'])) {
 
                 $thumbnail_name =
-                    pathinfo($request->file('website_thumbnail')->getClientOriginalName(), PATHINFO_FILENAME) . "_" . time() . '.' .
+                    pathinfo($request->file('website_thumbnail')
+                        ->getClientOriginalName(), PATHINFO_FILENAME) . "_" . time() . '.' .
                     $request->file('website_thumbnail')->getClientOriginalExtension();
 
                 $request->file('website_thumbnail')->move(
@@ -269,4 +281,26 @@ class EventsController extends Controller
     }
 
 
+    protected function schedules($event){
+
+        $schedules = array_map(function ($item) {
+
+            $start_date = date('Y-m-d', strtotime($item['start_date_time']));
+            $end_date = date('Y-m-d', strtotime($item['end_date_time']));
+
+            if ($start_date == $end_date) {
+                return
+                    date('l jS F Y, g:ia ', strtotime($item['start_date_time'])) . " - " .
+                    date('g:ia ', strtotime($item['end_date_time']));
+            }
+            return
+                date('l jS F Y, g:ia ', strtotime($item['start_date_time'])) . "to " .
+                date('l jS F Y, g:ia ', strtotime($item['end_date_time']));
+
+        },
+
+            $event->schedules->toArray());
+
+        return $schedules;
+    }
 }

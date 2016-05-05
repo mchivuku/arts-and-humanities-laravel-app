@@ -4,7 +4,7 @@ namespace ArtsAndHumanities\Http\Controllers;
 
 use ArtsAndHumanities\Models as Models;
 use ArtsAndHumanities\Http\Requests;
-
+use Illuminate\Support\Facades\Input as Input;
 class EventVenuesController extends Controller
 {
 
@@ -22,11 +22,12 @@ class EventVenuesController extends Controller
     {
 
         // get all the types
-        $venues = Models\Venue::all()->toArray();
+        $venues = Models\Venue::orderBy('sort_order')->get()->toArray();
 
          // edit/delete link
         $content = array_map(function($item){
 
+            $e['id']=$item['id'];
             $e['description']=$item['description'];
             $e['date'] = date("F j, Y",strtotime($item['updated_at']));
             $e['updated by']= $item['update_user'];
@@ -142,6 +143,30 @@ class EventVenuesController extends Controller
         Models\Venue::where("id","=",$id)->delete();
 
         \Session::flash('message', 'Successfully deleted the event venue!');
+        return \Redirect::to('eventVenues');
+    }
+
+    public function saveOrder(){
+        $inputs = Input::all();
+
+        $ids = $inputs['id'];
+
+        $count = 1;
+
+
+        foreach ($ids as $id) {
+
+            $pdo = \DB::getPdo();
+            $q = "UPDATE venue set sort_order = " . $count. " WHERE id = " . $id . ";";
+
+            $pdo->exec($q);
+
+            $count++;
+        }
+
+
+        // redirect
+        \Session::flash('message', 'Successfully save the order!');
         return \Redirect::to('eventVenues');
     }
 }

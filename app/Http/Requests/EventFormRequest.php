@@ -30,7 +30,7 @@ class EventFormRequest extends Request
     public function rules()
     {
         return [
-            'short_description' => 'max:100',
+            'short_description' => 'max:250',
             'website_thumbnail' => 'mimes:jpeg,bmp,png',
             'website_featured' =>'mimes:jpeg,bmp,png'
         ];
