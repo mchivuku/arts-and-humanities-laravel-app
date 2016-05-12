@@ -34,7 +34,6 @@ class BlogController extends BaseController{
         $posts=$this->fractal
             ->createData(new Collection($posts, new PostTransformer))->toArray();
 
-
         return view('blog.index')->with('posts',$posts['data']);
 
     }

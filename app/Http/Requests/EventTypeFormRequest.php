@@ -10,6 +10,7 @@
 namespace ArtsAndHumanities\Http\Requests;
 
 use ArtsAndHumanities\Http\Requests;
+use Illuminate\Http\JsonResponse;
 
 class EventTypeFormRequest extends EventAttributeFormRequest
 {
@@ -37,4 +38,5 @@ class EventTypeFormRequest extends EventAttributeFormRequest
             'description'=>'required|description_exists:type,description,id'
         ];
     }
+
 }

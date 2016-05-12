@@ -27,7 +27,8 @@ array('readonly'=>'readonly')))!!}
 @endif
 
 
-{!! Form::formGroup(Form::label('Event Url') ,"<h6>".Html::link($event->event_url,$event->event_url)."</h6>")!!}
+{!! Form::formGroup(Form::label('Event Url') ,
+"<h6>".Html::link($event->event_url,$event->event_url)."</h6>")!!}
 
 <dl class="accordion" role="tablist">
     <dt role="tab" tabindex="0">{!! Form::label('Description') !!}</dt>
@@ -56,6 +57,7 @@ Form::select('event_types',$types,$event->types()->lists('id')->toArray()
 <h5>Choose Thumbnail</h5>
 
 @if(isset($event->image_url_small) && $event->image_url_small!="")
+
     {!! Form::label('Thumbnail') !!}
     <figure class="media">
         <img class="th modal" alt="Event Photo" itemprop="image" src="{{$event->image_url_small}}"
@@ -75,6 +77,7 @@ Form::select('event_types',$types,$event->types()->lists('id')->toArray()
             <!-- Website Thumbnail -->
     @if(isset($event->website_image_url_small)  && $event->website_image_url_small!="")
         {!! Form::label('Website Thumbnail') !!}
+        <p> <a href="{{URL::to("/events/removeThumbnail")."/".$event->unique_id}}">Remove Thumbnail</a></p>
         <figure class="media">
             <img height="200" width="200"
                  src="{{URL::to("events/images/".basename($event->website_image_url_small))}}"
@@ -93,7 +96,7 @@ Form::select('event_types',$types,$event->types()->lists('id')->toArray()
         </div>
         @endif
 
-                <!-- Website Thumbnail -->
+         <!-- Website Thumbnail -->
         <div class="form-item">
             <div class="form-item-label">
                 <label for="file-upload">Choose a thumbnail (for website - 200x200):</label>

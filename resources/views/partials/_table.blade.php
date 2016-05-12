@@ -26,8 +26,8 @@ $columns =array_filter(array_keys($first),function($item){
                <td data-label="{{$col}}">{!!$value[$col]!!}</td>
             @endforeach
             <td class="disabled">
-                <span class="table-up up-arrow"></span>
-                <span class="table-down down-arrow"></span>
+                <span class="table-up up-arrow">&#8593;</span>
+                <span class="table-down down-arrow">&#8595;	</span>
                 <input type="hidden" name="id[]" value="{!!$value['id']!!}"/>
             </td>
         </tr>

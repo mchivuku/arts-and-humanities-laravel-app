@@ -38,6 +38,13 @@
                     </ul>
 
                 </li>
+
+                <li class="{{strpos(Request::url(),'admins')!==false?'current-trail current-parent':""}}"><a
+                            href="{{URL::to('admins')}}" itemprop="url"
+                            class="{{Request::path()=='admins'?'current-trail current':""}}">
+                        <span itemprop="name">Manage Administrators</span></a>
+
+                </li>
             </ul>
         </nav>
     </div>

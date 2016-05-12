@@ -5,9 +5,8 @@
 
             @if(count($collection)>0)
 
-                {{ Form::open(array('action' => 'EventTypesController@saveOrder','method'=>'POST')) }}
+                {{ Form::open(array('action' =>'EventTypesController@saveOrder','method'=>'POST','class'=>'sortOrder')) }}
                     @include("partials._table")
-
 
                 {{ Form::close() }}
 
@@ -15,6 +14,8 @@
             @else
             <p>No event types found!</p>
             @endif
+    <div id="viewModal" class="reveal-modal" data-reveal></div>
+
     {!! Html::endSection(true) !!}
 
 

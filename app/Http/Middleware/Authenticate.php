@@ -47,6 +47,7 @@ class Authenticate
      */
     public function handle($request, Closure $next)
     {
+
         if(\Session::get('user')==""){
             return  redirect()->action('HomeController@login');
         }

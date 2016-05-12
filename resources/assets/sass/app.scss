@@ -30,7 +30,7 @@
   font-size:1rem;
 }
 
- #events-table_info{
+ .dataTables_info{
    font-size:16px;
  }
 
@@ -71,23 +71,23 @@ input[type=file] {
 }
 
 /* Processing */
-#events-table_processing {
+#events-table_processing,#admins-table_processing {
   /* border-radius: 50px; */
   background: #990000;
   color: #fff;
 }
 
-#events-table_processing .panel:before {
+#events-table_processing .panel:before,#admins-table_processing .panel:before {
   height: 0;
 }
 
-.table-up:after {
-  content: "↟";
+.table-up {
+
   font-size:20px;
 }
 
-.table-down:after {
-  content: "↡";
+.table-down {
+
   font-size:20px;
 }
 

@@ -7,6 +7,12 @@ use Mockery\CountValidator\Exception;
 
 abstract class Job
 {
+
+    const JOB_START = "Job start";
+    const JOB_FINISH = "Job finish";
+    const JOB_FAIL = "Job Failed";
+    const WIPE_TABLE = "Table wipe";
+
     /*
     |--------------------------------------------------------------------------
     | Queueable Jobs
@@ -42,14 +48,19 @@ abstract class Job
             /*
              * Job started
              */
-            \Log::info(sprintf("%s: %s", $this->_jobName,JobEvents::JOB_START));
 
-            $this->run();
+            // Log job started.
+            self::log($this->_jobName,self::JOB_START) ;
+
+
+             $this->run();
 
             /*
             * Job ended
             */
-            \Log::info(sprintf("%s: %s", $this->_jobName,JobEvents::JOB_FINISH));
+
+            self::log($this->_jobName,self::JOB_FINISH) ;
+
 
 
         }catch(\Exception $ex){
@@ -57,8 +68,7 @@ abstract class Job
             /*
              * Job Failed
              */
-            \Log::error(sprintf("%s: %s", $this->_jobName,JobEvents::JOB_FAIL));
-
+            self::log($this->_jobName,self::JOB_FAIL,$ex->getMessage(),$ex);
         }
     }
 
@@ -113,4 +123,27 @@ abstract class Job
 
 
     }
+
+
+    static function log($job_name, $event, $message=""){
+
+        if(isset($message) && $message!=""){
+
+            $info = ['name'=>$job_name,
+                'event'=>$event,
+                'message'=>$message];
+
+        }
+
+
+        $info = ['name'=>$job_name,'event'=>$event,'message'=>$message];
+
+        \DB::table('job_log')->insert(
+            $info
+        );
+
+        return;
+
+    }
+
 }

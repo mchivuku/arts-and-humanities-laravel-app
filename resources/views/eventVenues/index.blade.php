@@ -6,7 +6,8 @@
 
             @if(count($collection)>0)
 
-                {{ Form::open(array('action' => 'EventVenuesController@saveOrder','method'=>'POST')) }}
+                {{ Form::open(array('action' =>'EventVenuesController@saveOrder','method'=>'POST','class'=>'sortOrder')) }}
+
                 @include("partials._table")
 
 
@@ -16,6 +17,7 @@
             @else
             <p>No event venues found!</p>
             @endif
+    <div id="viewModal" class="reveal-modal" data-reveal></div>
 
     {!! Html::endSection(true) !!}
 

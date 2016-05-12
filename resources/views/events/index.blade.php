@@ -72,12 +72,6 @@
 
         }
 
-        function loadSchedule(value){
 
-               $.get($(value).attr('href'),function(data){
-                    $('#viewModal').empty().html(data);
-                });
-
-        }
     </script>
 @endsection

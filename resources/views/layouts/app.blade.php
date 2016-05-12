@@ -35,6 +35,7 @@
     <link href="{{asset("css/foundation.min.css")}}" rel="stylesheet">
     <link href="{{asset("css/foundation-datepicker.min.css")}}" rel="stylesheet">
 
+
     <?php $_GET['path'] = 'css.html';include('includer.php')?>
 
 
@@ -63,7 +64,6 @@
 
 
     <?php include "gwassets/brand/2.x/header-iub.html"; ?>
-    <?php include "gwassets/search/2.x/search.html"; ?>
 
 
     <div class="inner-wrap">

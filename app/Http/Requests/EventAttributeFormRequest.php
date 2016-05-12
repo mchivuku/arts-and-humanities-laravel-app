@@ -24,7 +24,8 @@ class EventAttributeFormRequest extends Request
     public function rules()
     {
         // Help - from laravel discussions
-        \Validator::extend( 'description_exists', function ( $attribute, $value, $parameters, $validator ) {
+        \Validator::extend( 'description_exists',
+            function ( $attribute, $value, $parameters, $validator ) {
 
             // first parameter is the table name
             $table = array_shift( $parameters );
@@ -47,7 +48,9 @@ class EventAttributeFormRequest extends Request
                     ->first();
 
             }else{
-                $result = \DB::table( $table )->select( \DB::raw( 1 ) )->where( $fields )->whereNull('deleted_at')
+                $result = \DB::table( $table )
+                    ->select( \DB::raw( 1 ) )
+                    ->where( $fields )->whereNull('deleted_at')
                     ->first();
 
             }

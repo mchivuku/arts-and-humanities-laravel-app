@@ -34,6 +34,7 @@ class HomeController extends Controller
             return  redirect()->action('EventsController@index');
         }
 
+
         // $sid = SID; //Session ID #
 
         session_start();

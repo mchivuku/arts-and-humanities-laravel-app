@@ -25,16 +25,16 @@ Route::group(['middleware' => 'cas'], function()
 {
 
 
-
+    Route::post('saveOrderTypes','EventTypesController@saveOrder');
     Route::resource('eventTypes', 'EventTypesController');
     Route::get('/eventTypes/{id}/delete','EventTypesController@delete');
-    Route::post('saveOrder','EventTypesController@saveOrder');
 
 
    //Event Venues
+    Route::post('saveOrderVenues','EventVenuesController@saveOrder');
+
     Route::resource('eventVenues', 'EventVenuesController');
     Route::get('/eventVenues/{id}/delete','EventVenuesController@delete');
-    Route::post('saveOrder','EventVenuesController@saveOrder');
 
 });
 
@@ -49,8 +49,29 @@ Route::group(['prefix' => 'events','middleware' => 'cas'], function () {
     Route::get('/show/{id}', 'EventsController@show');
     Route::get('/schedule/{id}', 'EventsController@getSchedules');
 
+    // remove thumbnail - that was added
+    Route::get('/removeThumbnail/{id}', 'EventsController@removeWebsiteThumbnail');
+    Route::get('/delete/{id}', 'EventsController@delete');
 
 });
+
+
+
+//Events
+Route::group(['prefix' => 'admins','middleware' => 'cas'], function () {
+    Route::get('/', 'AdministratorsController@index');
+    Route::get('/data', 'AdministratorsController@jsonData');
+
+    Route::get('/add', 'AdministratorsController@add');
+    Route::post('/save', 'AdministratorsController@save');
+
+    Route::get('/view/{id}', 'AdministratorsController@show');
+    Route::get('/delete/{id}', 'AdministratorsController@delete');
+
+
+
+});
+
 
 
 // NO CAS
@@ -66,7 +87,6 @@ Route::get("events/images/{filename}",function($filename){
     }
 
     return "";
-
 
 });
 

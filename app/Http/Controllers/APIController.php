@@ -34,7 +34,7 @@ class APIController extends BaseController
      */
     public function types()
     {
-        $types = Models\Type::all();
+        $types = Models\Type::orderBy('sort_order')->get();
         return $this->fractal
             ->createData(new Collection($types, new EventTypeTransformer))
             ->toJson();
@@ -45,7 +45,8 @@ class APIController extends BaseController
      */
     public function venues()
     {
-        $venues = Models\Venue::all();
+        $venues = Models\Venue::orderBy('sort_order', 'asc')->get();
+
         return $this->fractal
             ->createData(new Collection($venues, new EventVenueTransformer))
             ->toJson();
@@ -117,10 +118,22 @@ class APIController extends BaseController
 
         //filter venue
         if (isset($venueId)) {
-            $paginator = $paginator->where('venue_id', '=', $venueId);
+            if($venueId=='featured'){
+                $paginator = $paginator->whereNotIn('venue_id',function($query){
+                    $query->select('id')
+                        ->from('venue')
+                        ->where('description', 'like','"Other%"')
+                        ->whereNull('deleted_at');
+                });
+
+            }else{
+                $paginator = $paginator->where('venue_id', '=', $venueId);
+
+            }
         }
 
         $paginator=$paginator->where('review_id','=',2);
+        $paginator=$paginator->orderByRaw('(select count(*) from event_schedule where event_id = event.unique_id) asc');
         $paginator = $paginator->paginate($this->perPage);
 
         $events = $paginator->getCollection();

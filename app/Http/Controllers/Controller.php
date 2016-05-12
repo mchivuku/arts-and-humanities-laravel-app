@@ -15,7 +15,8 @@ class Controller extends BaseController
     public function __construct()
     {
 
-
         $this->currentUser=  session()->get('user');
+
+
     }
 }

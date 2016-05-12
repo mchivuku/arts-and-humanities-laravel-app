@@ -8,7 +8,6 @@ $(document).ready(function(){
 
     jQuery.fn.exists = function(){return this.length>0;}
 
-     ModalWindow.init();
 
     // close alert box -
     $('.alert-box  > a.close').click(function() { $(this).closest('#alert').fadeOut(); });
@@ -34,14 +33,26 @@ $(document).ready(function(){
     });
 
     $('#save-order').click(function(event){
-
         event.preventDefault();
-        $('form').submit();
+        $('form.sortOrder').submit();
+    });
 
+    $('.modal').click(function(event){
+        event.preventDefault();
+        $.get($(this).attr('href'),
+            function(response){
+                $('#viewModal').empty().html(response);
+            });
     });
 
 });
 
+
+function loadModalWindow(value){
+    $.get($(value).attr('href'),function(data){
+        $('#viewModal').empty().html(data);
+    });
+}
 
 /** Modal Window **/
 ModalWindow = {
@@ -58,7 +69,6 @@ ModalWindow = {
 
     bindUIActions: function() {
         s.button.on("click", function(event) {
-            console.log('here');
             event.preventDefault();
             var link = $(this).attr('href');
             ModalWindow.loadModalWindow(link);
@@ -66,10 +76,8 @@ ModalWindow = {
     },
 
     loadModalWindow: function(link) {
-        console.log(link);
-        $.get(link,null,function(data){
-            $("#viewModal").html(data);
-
+         $.get(link,function(data){
+            $("#viewModal").empty().html(data);
         });
     }
 

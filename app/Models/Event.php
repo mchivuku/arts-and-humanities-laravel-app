@@ -9,9 +9,15 @@
 namespace ArtsAndHumanities\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class Event extends BaseModel
 {
+
+    use SoftDeletes;
+
+    protected $softDelete = true;
+
+
     protected $table = 'event';
     public $incrementing = false;
     public $primaryKey = 'unique_id';

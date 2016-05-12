@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
        Commands\Inspire::class,
         Commands\ImportCalendarEvents::class,
+        Commands\SendJobNotification::class,
     ];
 
     /**
@@ -27,5 +28,11 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->command('import:calendar')
+            ->dailyAt('09:50')->after(
+                function() {
+                    Artisan::call('email.notify');
+                });
     }
 }

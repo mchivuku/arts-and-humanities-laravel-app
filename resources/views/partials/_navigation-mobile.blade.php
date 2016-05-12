@@ -21,7 +21,8 @@
         </li>
         <li class="has-children current-trail ">
             <a href="{{URL::to('eventTypes')}}" itemprop="url" tabindex="1"><span
-                        itemprop="name">Manage Event Types</span><a href="#" class="more" tabindex="1">More about
+                        itemprop="name">Manage Event Types</span>
+                <a href="#" class="more" tabindex="1">More about
                     event types</a></a>
             <ul class="children">
                 <li>
@@ -39,6 +40,14 @@
                 </li>
             </ul>
         </li>
+
+        <li class="has-children current-trail">
+            <a href="{{URL::to('admins')}}" itemprop="url" tabindex="1">
+                <span itemprop="name">Manage Administrators</span><a
+                        href="#" class="more" tabindex="1">More about administrators</a></a>
+
+        </li>
+
 
     </ul>
 </nav>

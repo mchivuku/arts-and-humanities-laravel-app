@@ -11,8 +11,9 @@ namespace ArtsAndHumanities\Jobs;
 class ImportIntoEventsDB extends Job
 {
 
-    private $startdate = '2016-04-12';
+    private $startdate = '2016-01-01';
     private $enddate = '2016-12-31';
+    protected $job_user = 'jobuser';
 
     public function __construct()
     {
@@ -39,7 +40,7 @@ class ImportIntoEventsDB extends Job
 
         $context = stream_context_create(array('http' => array('header' => 'Accept: application/xml')));
         /*
-         * TODO::Check for dates or append query string
+         * TODO::Check for dates and append query string
          */
         $url = \Config::get('app.calendar_url');//TODO:fix dates
         $url .= "&startDate=" . $this->startdate . "&endDate=" . $this->enddate;
@@ -91,6 +92,7 @@ class ImportIntoEventsDB extends Job
         return array();
     }
 
+    //row, event, key, dbkey
     private function add_isset($row, &$e, $key, $dbkey, $format = 'string', $default = "")
     {
 
@@ -152,7 +154,7 @@ class ImportIntoEventsDB extends Job
         foreach ($data['event'] as $row) {
 
             $e = [];
-
+            //row, event, key, dbkey
             $this->add_isset($row, $e, 'calendar-id', 'calendar_id');
             $this->add_isset($row, $e, 'event-url', 'event_url');
             $this->add_isset($row, $e, 'summary', 'summary');
@@ -173,7 +175,7 @@ class ImportIntoEventsDB extends Job
             $this->add_isset($row, $e, 'other-info', 'other_info');
             $this->add_isset($row, $e, 'unique-id', 'unique_id');
             $this->add_isset($row, $e, 'url', 'url');
-            $e['update_user']='jobuser';
+            $e['update_user']=$this->job_user;
 
             $insert_array[] = $e;
 
@@ -196,6 +198,7 @@ class ImportIntoEventsDB extends Job
             foreach($v as $c){
                 $i['event_id']=$k;
                 $i['contact_info']=$c;
+                $i['update_user']=$this->job_user;
                 $insert_array[]=$i;
             }
         }
@@ -217,6 +220,8 @@ class ImportIntoEventsDB extends Job
                     $i['value']=$a['value'];
                     $i['encoding']=$a['encoding'];
                     $i['mime_type']=$a['mime-type'];
+                    $i['update_user']=$this->job_user;
+
                     $insert_array[]=$i;
                 }
             }
@@ -227,7 +232,6 @@ class ImportIntoEventsDB extends Job
         }catch(\Exception $ex){
             var_dump($ex);
         }
-
 
     }
 
@@ -253,6 +257,8 @@ class ImportIntoEventsDB extends Job
                 $i['event_id']=$k;
                 $i['start_date_time']=$x['start_date_time'];
                 $i['end_date_time']=$x['end_date_time'];
+                $i['update_user']=$this->job_user;
+
                 $insert_array[]=$i;
             }
         }
@@ -275,6 +281,8 @@ class ImportIntoEventsDB extends Job
                 foreach($cat as $c ){
                     $i['event_id']=$k;
                     $i['category']=$c;
+                    $i['update_user']=$this->job_user;
+
                     $insert_array[]=$i;
                 }
 

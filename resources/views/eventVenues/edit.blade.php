@@ -9,7 +9,9 @@
 
 
 @include('partials._formerrors')
-    {{ Form::model($model, array('route' => array('eventVenues.update', $model->id),
+
+    {{ Form::model($model,
+    array('route' => array('eventVenues.update', $model->id),
      'method' => 'PUT')) }}
     @include('partials._form')
 

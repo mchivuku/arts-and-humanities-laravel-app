@@ -19,7 +19,6 @@ class EventsController extends Controller
 
     public function __construct(EventTransformer $transformer)
     {
-
         $this->transformer=$transformer;
         parent::__construct();
     }
@@ -27,6 +26,19 @@ class EventsController extends Controller
 
     public function index()
     {
+        // check if the user is admin
+        $admin = \DB::table('administrator')
+            ->select( \DB::raw( 1 ) )
+            ->where( 'username','=',$this->currentUser)
+            ->whereNull('deleted_at')
+            ->first();
+
+        // Not admin - 401 - TODO: may be this is not a right place
+        if(!isset($admin)){
+            $url = $_ENV['HOME_PATH']."/error/401.html";
+            header('Location:'.$url);
+        }
+
 
         $review_id = Input::get('review');
 
@@ -36,14 +48,25 @@ class EventsController extends Controller
             $reviews[$review['id']] = 'All  ' . $review['description'] . " Events";
         }
 
-        if (isset($review_id) && $review_id != "all") {
+        //get deleted events
+        $reviews['deleted']='All Deleted Events';
+        $events="";
+        if (isset($review_id) && $review_id != "all" && $review_id!='deleted') {
             $events = Models\Event::with('types')->with('venue')
                 ->with('review')
                 ->where('review_id', '=', $review_id)
                 ->select('unique_id', 'summary', 'image_url_small','event_url',
                     'location', 'website_image_url_small', 'review_id')
                 ->get();
-        } else {
+        } else if($review_id == "deleted"){
+
+            $events = Models\Event::onlyTrashed()->with('types')
+                ->with('review')->with('venue')->get();
+
+
+        }
+        // All events
+        else{
             $events = Models\Event::with('types')
                 ->with('review')->with('venue')->get();
         }
@@ -73,6 +96,8 @@ class EventsController extends Controller
             if ($thumbnail == "") $thumbnail = "#";
 
             $edit = \URL::to("/events/edit" . '/' . $event->unique_id);
+            $delete_link =\URL::to("/events/delete" . '/' . $event->unique_id);
+
             $schedule_link = \URL::to("/events/schedule" . '/' . $event->unique_id);
             $venue = $event->venue()->first();
             $status = $event->review()->first()->description;
@@ -93,9 +118,10 @@ class EventsController extends Controller
                     },
                         $event->types()->get()->toArray())),
                 'status' => $status,
-                'schedule' => "<a data-reveal-id=\"viewModal\" onclick=\"loadSchedule(this);return false;\" href='" . $schedule_link . "' class=\"modal\" >View Schedule</a>",
-                'action' => "<a href='$edit'>Edit</a>",
-                'link' => '<a target=\"_blank\" href="' . $website_link . '">View on the website</a>'
+                'schedule' => "<a data-reveal-id=\"viewModal\" onclick=\"loadModalWindow(this);return false;\" href='" .
+                    $schedule_link . "' class=\"modal\" >View Schedule</a>",
+                'action' => $event->deleted_at!=''?"&mdash;":"<a href='$edit'>Edit</a> | <a href='$delete_link'>Delete</a>",
+                'link' => $event->deleted_at!=''?"&mdash;":'<a target=\"_blank\" href="' . $website_link . '">View on the website</a>'
             ]);
         }
 
@@ -117,12 +143,17 @@ class EventsController extends Controller
     {
         $review_id = Input::get('review');
 
-        if (isset($review_id) && $review_id != "all") {
+        if (isset($review_id) && $review_id != "all" && $review_id!='deleted') {
             $events = Models\Event::with('types')->with('venue')->with('review')
                 ->where('review_id', '=', $review_id)
                 ->select('unique_id', 'summary',
                     'image_url_small', 'location', 'website_image_url_small', 'review_id')->get();
-        } else {
+        }else if($review_id=='deleted'){
+            $events =  $events = Models\Event::onlyTrashed()->with('types')
+                ->with('review')->with('venue')->get();
+        }
+        // ALl events
+        else{
             $events = Models\Event::with('types')->with('venue')
                 ->with('review')
                 ->select('unique_id', 'summary', 'image_url_small',
@@ -135,7 +166,7 @@ class EventsController extends Controller
 
     public function getSchedules($id)
     {
-        $event = Models\Event::with('schedules')
+        $event = Models\Event::withTrashed()->with('schedules')
             ->where('unique_id', '=', $id)->first();
 
          $schedules = $this->schedules($event);
@@ -303,4 +334,36 @@ class EventsController extends Controller
 
         return $schedules;
     }
+
+
+    public function removeWebsiteThumbnail($id){
+
+
+        $event = Models\Event::find($id);
+        if(isset($event)){
+            $event->website_image_url_small= "";
+
+            $event->save();
+        }
+
+        return redirect(\URL::to("/events/edit") . '/' . $id);
+
+    }
+
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function delete($id)
+    {
+
+        Models\Event::find($id)->delete();
+        \Session::flash('message', 'Successfully deleted the event!');
+        return \Redirect::to('events');
+    }
+
 }

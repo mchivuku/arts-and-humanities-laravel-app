@@ -11,6 +11,7 @@ class EventVenueTransformer extends TransformerAbstract
 
     public function transform(Models\Venue $venue)
     {
+
         return [
             'id' => (int)$venue->id,
             'description' => $venue->description
