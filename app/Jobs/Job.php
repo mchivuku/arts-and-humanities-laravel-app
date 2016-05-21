@@ -50,7 +50,8 @@ abstract class Job
              */
 
             // Log job started.
-            self::log($this->_jobName,self::JOB_START) ;
+            //self::log($this->_jobName,self::JOB_START) ;
+
 
 
              $this->run();
@@ -59,16 +60,17 @@ abstract class Job
             * Job ended
             */
 
-            self::log($this->_jobName,self::JOB_FINISH) ;
+           // self::log($this->_jobName,self::JOB_FINISH) ;
 
 
 
         }catch(\Exception $ex){
 
+            var_dump($ex->getMessage());
             /*
              * Job Failed
              */
-            self::log($this->_jobName,self::JOB_FAIL,$ex->getMessage(),$ex);
+            //self::log($this->_jobName,self::JOB_FAIL,$ex->getMessage(),$ex);
         }
     }
 
@@ -123,6 +125,7 @@ abstract class Job
 
 
     }
+
 
 
     static function log($job_name, $event, $message=""){

@@ -38,6 +38,7 @@ class ImportCalendarEvents extends Command
 
         $job->execute();
 
+
         echo 'completed job';
         echo PHP_EOL;
     }

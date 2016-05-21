@@ -18,7 +18,11 @@ Route::get('/', function(){
 
 Route::get('/login','HomeController@login' );
 
+Route::get('/Job',function(){
 
+    $job = new \ArtsAndHumanities\Jobs\ImportIntoEventsDB();
+    $job->execute();
+});
 
 //Event Types
 Route::group(['middleware' => 'cas'], function()
