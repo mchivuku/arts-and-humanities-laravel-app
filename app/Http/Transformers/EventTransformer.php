@@ -44,6 +44,7 @@ class EventTransformer extends TransformerAbstract
             return [
                 'id' => $event->unique_id,
                 'description' => $this->base_transformer->truncateDesc($event->description, 250),
+                'location'=>$event->location,
                 'short_description' => $event->short_description,
                 'summary'=>$event->summary,
                 'event_url'=>$event->event_url,
@@ -76,7 +77,8 @@ class EventTransformer extends TransformerAbstract
             'other_info'=>$event->other_info,
             'contacts'=>$event->contacts()->get()->implode('contact_info', ', '),
             'repeat_message'=>$this->getRepeatMessage($event),
-            'url'=>$event->url
+            'url'=>$event->url,
+            'location'=>$event->location
 
         ];
 
